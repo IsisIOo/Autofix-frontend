@@ -2,11 +2,11 @@ import httpRecord from "../http-common";
 
 
 const getAll = () => {
-    return httpRecord.get('/api/v1/record/');
+    return httpRecord.get('/api/repair/');
 }
 
 const create = data => {
-    return httpRecord.post("/api/v1/record/", data);
+    return httpRecord.post("/api/repair/", data);
 }
 
 const get = patent => {

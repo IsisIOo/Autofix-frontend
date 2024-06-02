@@ -19,6 +19,7 @@ import TimeList from './components/TimeList'
 import AddEditTime from './components/AddEditTime'
 import TablaTipo from './components/TablaTipo'
 import TablaRep from './components/TablaRep'
+import PreciosList from './components/PreciosList'
 
 
 
@@ -48,6 +49,9 @@ function App() {
 
               <Route path = "/list/type" element = {<TablaTipo/>} />
               <Route path = "/list/reparacion" element = {<TablaRep/>} />
+
+              <Route path = "/repair-list/price" element = {<PreciosList/>} />
+
             </Routes>
           </div>
 

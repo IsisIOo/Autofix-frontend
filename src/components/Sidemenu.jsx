@@ -82,6 +82,13 @@ export default function Sidemenu({ open, toggleDrawer }) {
           <ListItemText primary="Cantidad reparaciones" />
         </ListItemButton>
 
+        <ListItemButton onClick={() => navigate("/repair-list/price")}>
+          <ListItemIcon>
+            <PaidIcon/>
+          </ListItemIcon>
+          <ListItemText primary="Precios del taller" />
+        </ListItemButton>
+
 
       </List>
 
