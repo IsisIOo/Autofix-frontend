@@ -1,24 +1,25 @@
 import { useState, useEffect } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
-import recordService from "../services/record.service";
+import { useParams, useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
 import MenuItem from "@mui/material/MenuItem";
 import SaveIcon from "@mui/icons-material/Save";
-import AssignmentIcon from '@mui/icons-material/Assignment';
 import Paper from "@mui/material/Paper";
-import carService from "../services/car.service";
-import InfoIcon from '@mui/icons-material/Info';
+import Select from "@mui/material/Select";
+import Checkbox from "@mui/material/Checkbox";
+import ListItemText from "@mui/material/ListItemText";
+import InputLabel from "@mui/material/InputLabel";
+import detalleService from "../services/detalle.service";
 
-const AddEditRecord = () => {
+const AddEditRepair = () => {
   const [patent, setPatent] = useState("");
   const [admissionDateDayName, setAdmissionDateDayName] = useState("");
   const [admissionDateDay, setAdmissionDateDay] = useState("");
   const [admissionDateMonth, setAdmissionDateMonth] = useState("");
   const [admissionHour, setAdmissionHour] = useState("");
-  const [repairType, setRepairType] = useState("");
+  const [repairType, setRepairType] = useState([]); // Asegurarse de que sea un array
   const [departureDateDay, setDepartureDateDay] = useState("");
   const [departureDateMonth, setDepartureDateMonth] = useState("");
   const [departureHour, setDepartureHour] = useState("");
@@ -27,377 +28,345 @@ const AddEditRecord = () => {
   const [clientHour, setClientHour] = useState("");
   const [category, setCategory] = useState("");
   const [totalAmount, setTotalAmount] = useState(null);
+  
+  //nuevos
+  const [totalDiscounts , setToalDiscounts] = useState(null);
+  const [totalIva, setTotalIva] = useState(null);
+  const [totalRecharges, setTotalRecharges] = useState(null);
+  //
   const { id } = useParams();
-  const [titleRecordForm, setTitleRecordForm] = useState("");
+  const [titleRepairForm, setTitleRepairForm] = useState("");
   const navigate = useNavigate();
 
 
-  const saveRecord = (e) => {
+  // Función para manejar el cambio en los tipos de reparación seleccionados
+  const handleRepairTypeChange = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setRepairType(
+      // Asegurarse de que value es siempre un array
+      typeof value === "string" ? value.split(", ") : value
+    );
+  };
+
+  // Función para guardar el registro
+  const saveRepair = (e) => {
     e.preventDefault();
-  
-        const record = { patent, admissionDateDayName, admissionDateDay, admissionDateMonth, admissionHour, repairType,  departureDateDay, departureDateMonth, departureHour, clientDateDay, clientDateMonth, clientHour, id };
-        console.log(record);
-  
-        if (id) {
-          //Actualizar Datos 
-          recordService
-            .update(record)
-            .then((response) => {
-              console.log("Historial ha sido actualizado.", response.data);
-              navigate("/record/list");
-            })
-            .catch((error) => {
-              console.log(
-                "Ha ocurrido un error al intentar actualizar datos del historial.",
-                error
-              );
-            });
-        } else {
-          //Crear nuevo empleado
-          recordService
-            .newrecord(record)
-            .then((response) => {
-              console.log("Historial ha sido añadido.", response.data);
-              navigate("/record/list");
-            })
-            .catch((error) => {
-              console.log(
-                "Ha ocurrido un error al intentar crear nuevo historial.",
-                error
-              );
-            });
-        }
+    const repair = {
+      patent,
+      admissionDateDayName,
+      admissionDateDay,
+      admissionDateMonth,
+      admissionHour,
+      departureDateDay,
+      departureDateMonth,
+      departureHour,
+      clientDateDay,
+      clientDateMonth,
+      clientHour,
+      id,
+    };
+    console.log(repair);
+
+
+
+    if (id) {
+      // Actualizar Datos, la verdad ahora no existe
+      repairService.update(repair)
+        .then((response) => {
+          console.log("Historial ha sido actualizado.", response.data);
+          navigate("/record/list");
+        })
+        .catch((error) => {
+          console.log("Ha ocurrido un error al intentar actualizar datos del historial.", error);
+        });
+    } else {
+      // Crear nuevo empleado
+      detalleService.newrepair(repair)
+        .then((response) => {
+          console.log("Historial ha sido añadido.", response.data);
+        
+          navigate("/record/list");
+        })
+        .catch((error) => {
+          console.log("Ha ocurrido un error al intentar crear nuevo historial.", error);
+        });
+    }
   };
 
 
+    // Función para guardar el detalle
+    const saveDetalle = (o) => {
+      o.preventDefault();
+      const detalle = {
+        repairType: repairType.join(", "), // Convertir el array a una cadena para guardarlo
+        id,
+      };
+      console.log(detalle);
+  
+      detalleService.newdetalle(detalle)
+        .then((response) => {
+          console.log("Detalle ha sido añadido.", response.data);
+          navigate("/record/list");
+        })
+        .catch((error) => {
+          console.log("Ha ocurrido un error al intentar crear el detalle.", error);
+        });
+    };
+
   useEffect(() => {
     if (id) {
-      setTitleRecordForm("Editar Historial");
-      recordService
-        .get(id)
-        .then((record) => {
-          setPatent(record.data.patent);
-          setadmissionDateDayName(record.data.admissionDateDayName);
-          setadmissionDateDay(record.data.admissionDateDay);
-          setadmissionDateMonth(record.data.admissionDateMonth);
-          setadmissionHour(record.data.admissionHour);
-          setrepairType(record.data.repairType);
-          //fecha en la que debe irse
-          setdepartureDateDay(record.data.departureDateDay);
-          setdepartureDateMonth(record.data.departureDateMonth);
-          setdepartureHour(record.data.departureHour);
-          //fecha en el que se lo llevan
-          setclientDateDay(record.data.clientDateDay);
-          setclientDateMonth(record.data.clientDateMonth);
-          setclientHour(record.data.clientHour);
-          setTotalAmount(null);
+      setTitleRepairForm("Editar Historial");
+      detalleService.getOneRepair(id)
+        .then((repair) => {
+          setPatent(repair.data.patent);
+          setAdmissionDateDayName(repair.data.admissionDateDayName);
+          setAdmissionDateDay(repair.data.admissionDateDay);
+          setAdmissionDateMonth(repair.data.admissionDateMonth);
+          setAdmissionHour(repair.data.admissionHour);
+          setDepartureDateDay(repair.data.departureDateDay);
+          setDepartureDateMonth(repair.data.departureDateMonth);
+          setDepartureHour(repair.data.departureHour);
+          setClientDateDay(repair.data.clientDateDay);
+          setClientDateMonth(repair.data.clientDateMonth);
+          setClientHour(repair.data.clientHour);
+          setTotalAmount(repair.data.totalAmount || null);
+          setToalDiscounts(repair.data.totalDiscounts || null);
+          setTotalIva(repair.data.totalIva || null);
+          setTotalRecharges(repair.data.totalRecharges || null);
+          setRepairType(repair.data.repairType.split(", ")); 
         })
         .catch((error) => {
           console.log("Se ha producido un error.", error);
         });
     } else {
-      setTitleRecordForm("Nuevo Historial");
+      setTitleRepairForm("Nuevo Historial");
     }
-  }, []);
+  }, [id]);
+
+  const repairOptions = [
+    "Reparaciones del Sistema de Frenos",
+    "Servicio del Sistema de Refrigeración",
+    "Reparaciones del Motor",
+    "Reparaciones de la transmisión",
+    "Reparación del Sistema Eléctrico",
+    "Reparaciones del Sistema de Escape",
+    "Reparación de Neumáticos y Ruedas",
+    "Reparaciones de la Suspensión y la Dirección",
+    "Reparación del Sistema de Aire Acondicionado y Calefacción",
+    "Reparaciones del Sistema de Combustible",
+    "Reparación y Reemplazo del Parabrisas y Cristales",
+  ];
 
   return (
-    <Paper >
-    <Box
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      justifyContent="center"
-    >
-      <h3> {titleRecordForm} </h3>
-
-      <form>
-        <FormControl fullWidth>
-          <TextField
-            id="patent"
-            label="Patente"
-            value={patent}
-            variant="standard"
-            onChange={(e) => setPatent(e.target.value)}
-            helperText="Ej. ABC123"
-          />
-        </FormControl>
-
-        <FormControl fullWidth>
-          <TextField
-            id="admissionDateDayName"
-            label="Dia admisión"
-            value={admissionDateDayName}
-            select
-            variant="standard"
-            onChange={(e) => setAdmissionDateDayName(e.target.value)}
-            style={{ width: "25%" }}
-          >
-            <MenuItem value={"Lunes"}>Lunes</MenuItem>
-            <MenuItem value={"Martes"}>Martes</MenuItem>
-            <MenuItem value={"Miercoles"}>Miercoles</MenuItem>
-            <MenuItem value={"Jueves"}>Jueves</MenuItem>
-            <MenuItem value={"Viernes"}>Viernes</MenuItem>
-            <MenuItem value={"Sabado"}>Sabado</MenuItem>
-            <MenuItem value={"Domingo"}>Domingo</MenuItem>
-          </TextField>
-        </FormControl>
-
-
-        <FormControl fullWidth>
-          <TextField
-            id="admissionDateDay"
-            label="Dia admisión"
-            value={admissionDateDay}
-            select
-            variant="standard"
-            onChange={(e) => setAdmissionDateDay(e.target.value)}
-            style={{ width: "25%" }}
-          >
+    <Paper>
+      <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+        <h3>{titleRepairForm}</h3>
+        <form>
+          <FormControl fullWidth>
+            <TextField
+              id="patent"
+              label="Patente"
+              value={patent}
+              variant="standard"
+              style={{ width: "25%" }}
+              onChange={(e) => setPatent(e.target.value)}
+              helperText="Ej. ABC123"
+            />
+          </FormControl>
+          <FormControl fullWidth>
+            <TextField
+              id="admissionDateDayName"
+              label="Dia admisión"
+              value={admissionDateDayName}
+              select
+              variant="standard"
+              onChange={(e) => setAdmissionDateDayName(e.target.value)}
+              style={{ width: "25%" }}
+            >
+              <MenuItem value={"Lunes"}>Lunes</MenuItem>
+              <MenuItem value={"Martes"}>Martes</MenuItem>
+              <MenuItem value={"Miércoles"}>Miércoles</MenuItem>
+              <MenuItem value={"Jueves"}>Jueves</MenuItem>
+              <MenuItem value={"Viernes"}>Viernes</MenuItem>
+              <MenuItem value={"Sábado"}>Sábado</MenuItem>
+              <MenuItem value={"Domingo"}>Domingo</MenuItem>
+            </TextField>
+          </FormControl>
+          <FormControl fullWidth>
+            <TextField
+              id="admissionDateDay"
+              label="Dia admisión"
+              value={admissionDateDay}
+              select
+              variant="standard"
+              onChange={(e) => setAdmissionDateDay(e.target.value)}
+              style={{ width: "25%" }}
+            >
+              {[...Array(31)].map((_, i) => (
+                <MenuItem key={i + 1} value={i + 1}>
+                  {i + 1}
+                </MenuItem>
+              ))}
+            </TextField>
+          </FormControl>
+          <FormControl fullWidth>
+            <TextField
+              id="admissionDateMonth"
+              label="Mes admisión"
+              value={admissionDateMonth}
+              select
+              variant="standard"
+              onChange={(e) => setAdmissionDateMonth(e.target.value)}
+              style={{ width: "25%" }}
+            >
+              {[...Array(12)].map((_, i) => (
+                <MenuItem key={i + 1} value={i + 1}>
+                  {i + 1}
+                </MenuItem>
+              ))}
+            </TextField>
+          </FormControl>
           
-            <MenuItem value={1}>1</MenuItem>
-            <MenuItem value={2}>2</MenuItem>
-            <MenuItem value={3}>3</MenuItem>
-            <MenuItem value={4}>4</MenuItem>
-            <MenuItem value={5}>5</MenuItem>
-            <MenuItem value={6}>6</MenuItem>
-            <MenuItem value={7}>7</MenuItem>
-            <MenuItem value={8}>8</MenuItem>
-            <MenuItem value={9}>9</MenuItem>
-            <MenuItem value={10}>10</MenuItem>
-            <MenuItem value={11}>11</MenuItem>
-            <MenuItem value={12}>12</MenuItem>
-            <MenuItem value={13}>13</MenuItem>
-            <MenuItem value={14}>14</MenuItem>
-            <MenuItem value={15}>15</MenuItem>
-            <MenuItem value={16}>16</MenuItem>
-            <MenuItem value={17}>17</MenuItem>
-            <MenuItem value={18}>18</MenuItem>
-            <MenuItem value={19}>19</MenuItem>
-            <MenuItem value={20}>20</MenuItem>
-            <MenuItem value={21}>21</MenuItem>
-            <MenuItem value={22}>22</MenuItem>
-            <MenuItem value={23}>23</MenuItem>
-            <MenuItem value={24}>24</MenuItem>
-            <MenuItem value={25}>25</MenuItem>
-            <MenuItem value={26}>26</MenuItem>
-            <MenuItem value={27}>27</MenuItem>
-            <MenuItem value={28}>28</MenuItem>
-            <MenuItem value={29}>29</MenuItem>
-            <MenuItem value={30}>30</MenuItem>
-            <MenuItem value={31}>31</MenuItem>
-          </TextField >
-        </FormControl>
-        
-        <FormControl fullWidth>
-          <TextField
-            id="admissionDateMonth"
-            label="Mes admisión" 
-            value={admissionDateMonth}
-            select
-            variant="standard"
-            onChange={(e) => setAdmissionDateMonth(e.target.value)}
-            style={{ width: "25%" }}
-          >
-            <MenuItem value={1}>1</MenuItem>
-            <MenuItem value={2}>2</MenuItem>
-            <MenuItem value={3}>3</MenuItem>
-            <MenuItem value={4}>4</MenuItem>
-            <MenuItem value={5}>5</MenuItem>
-            <MenuItem value={6}>6</MenuItem>
-            <MenuItem value={7}>7</MenuItem>
-            <MenuItem value={8}>8</MenuItem>
-            <MenuItem value={9}>9</MenuItem>
-            <MenuItem value={10}>10</MenuItem>
-            <MenuItem value={11}>11</MenuItem>
-            <MenuItem value={12}>12</MenuItem>
-          </TextField >
-        </FormControl>
+          <FormControl fullWidth>
+            <TextField
+              id="admissionHour"
+              label="Hora de admisión"
+              value={admissionHour}
+              style={{ width: "25%" }}
+              variant="standard"
+              onChange={(e) => setAdmissionHour(e.target.value)}
+            />
+          </FormControl>
 
 
 
-        <FormControl fullWidth>
-          <TextField
-            id="admissionHour"
-            label="Hora de admisión"
-            value={admissionHour}
-            variant="standard"
-            onChange={(e) => setAdmissionHour(e.target.value)}
-          />
-        </FormControl>
-
-        <FormControl fullWidth>
-          <TextField
-            id="repairType"
-            label="Tipo de reparacion" 
-            value={repairType}
-            select
-            variant="standard"
-            onChange={(e) => setRepairType(e.target.value)}
-            style={{ width: "25%" }}
-            
-          >
-          
-            <MenuItem value={"Reparaciones del Sistema de Frenos"}>Reparaciones del Sistema de Frenos</MenuItem>
-            <MenuItem value={"Servicio del Sistema de Refrigeración"}>Servicio del Sistema de Refrigeración</MenuItem>
-            <MenuItem value={"Reparaciones del Motor"}>Reparaciones del Motor</MenuItem>
-            <MenuItem value={"Reparaciones de la transmisión"}>Reparaciones de la transmisión</MenuItem>
-            <MenuItem value={"Reparación del Sistema Eléctrico"}>Reparación del Sistema Eléctrico</MenuItem>
-            <MenuItem value={"Reparaciones del Sistema de Escape"}>Reparaciones del Sistema de Escape</MenuItem>
-            <MenuItem value={"Reparación de Neumáticos y Ruedas"}>Reparación de Neumáticos y Ruedas</MenuItem>
-            <MenuItem value={"Reparaciones de la Suspensión y la Dirección"}>Reparaciones de la Suspensión y la Dirección</MenuItem>
-            <MenuItem value={"Reparación del Sistema de Aire Acondicionado y Calefacción"}>Reparación del Sistema de Aire Acondicionado y Calefacción</MenuItem>
-            <MenuItem value={"Reparaciones del Sistema de Combustible"}>Reparaciones del Sistema de Combustible</MenuItem>
-            <MenuItem value={"Reparación y Reemplazo del Parabrisas y Cristales"}>Reparación y Reemplazo del Parabrisas y Cristales</MenuItem>
-          </TextField >
-        </FormControl>
+          <FormControl fullWidth>
+            <InputLabel id="repairType-label">Tipo de reparación</InputLabel>
+            <Select
+              id="repairType"
+              labelId="repairType-label"
+              multiple
+              value={repairType}
+              variant="standard"
+              onChange={handleRepairTypeChange}
+              renderValue={(selected) => selected.join(", ")}
+              style={{ width: "75%", fontSize: '0.875rem' }}
+            >
+              {repairOptions.map((option) => (
+                <MenuItem key={option} value={option}>
+                  <Checkbox checked={repairType.indexOf(option) > -1} />
+                  <ListItemText primary={option} />
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
 
-
-        <FormControl fullWidth>
-          <TextField
-            id="departureDateDay"
-            label="Dia retiro"
-            value={departureDateDay}
-            select
-            variant="standard"
-            
-            onChange={(e) => setDepartureDateDay(e.target.value)}
-            style={{ width: "25%" }}
-          >
-          
-            <MenuItem value={1}>1</MenuItem>
-            <MenuItem value={2}>2</MenuItem>
-            <MenuItem value={3}>3</MenuItem>
-            <MenuItem value={4}>4</MenuItem>
-            <MenuItem value={5}>5</MenuItem>
-            <MenuItem value={6}>6</MenuItem>
-            <MenuItem value={7}>7</MenuItem>
-            <MenuItem value={8}>8</MenuItem>
-            <MenuItem value={9}>9</MenuItem>
-            <MenuItem value={10}>10</MenuItem>
-            <MenuItem value={11}>11</MenuItem>
-            <MenuItem value={12}>12</MenuItem>
-            <MenuItem value={13}>13</MenuItem>
-            <MenuItem value={14}>14</MenuItem>
-            <MenuItem value={15}>15</MenuItem>
-            <MenuItem value={16}>16</MenuItem>
-            <MenuItem value={17}>17</MenuItem>
-            <MenuItem value={18}>18</MenuItem>
-            <MenuItem value={19}>19</MenuItem>
-            <MenuItem value={20}>20</MenuItem>
-            <MenuItem value={21}>21</MenuItem>
-            <MenuItem value={22}>22</MenuItem>
-            <MenuItem value={23}>23</MenuItem>
-            <MenuItem value={24}>24</MenuItem>
-            <MenuItem value={25}>25</MenuItem>
-            <MenuItem value={26}>26</MenuItem>
-            <MenuItem value={27}>27</MenuItem>
-            <MenuItem value={28}>28</MenuItem>
-            <MenuItem value={29}>29</MenuItem>
-            <MenuItem value={30}>30</MenuItem>
-            <MenuItem value={31}>31</MenuItem>
-          </TextField >
-        </FormControl>
-        
-        <FormControl fullWidth>
-          <TextField
-            id="departureDateMonth"
-            label="Mes retiro" 
-            value={departureDateMonth}
-            select
-            variant="standard"
-            
-            onChange={(e) => setDepartureDateMonth(e.target.value)}
-            style={{ width: "25%" }}
-          >
-          
-            <MenuItem value={1}>1</MenuItem>
-            <MenuItem value={2}>2</MenuItem>
-            <MenuItem value={3}>3</MenuItem>
-            <MenuItem value={4}>4</MenuItem>
-            <MenuItem value={5}>5</MenuItem>
-            <MenuItem value={6}>6</MenuItem>
-            <MenuItem value={7}>7</MenuItem>
-            <MenuItem value={8}>8</MenuItem>
-            <MenuItem value={9}>9</MenuItem>
-            <MenuItem value={10}>10</MenuItem>
-            <MenuItem value={11}>11</MenuItem>
-            <MenuItem value={12}>12</MenuItem>
-          </TextField >
-        </FormControl>
-
-        <FormControl fullWidth>
-          <TextField
-            id="departureHour"
-            label="Hora de retiro"
-            value={departureHour}
-            variant="standard"
-            onChange={(e) => setDepartureHour(e.target.value)}
-          />
-        </FormControl>
-
-
-
-        <FormControl fullWidth>
-          <TextField
-            id="clientDateDay"
-            label="Dia retirado"
-            value={clientDateDay}
-            variant="standard"
-            onChange={(e) => setClientDateDay(e.target.value)}
-
-          />
-        </FormControl>
-
-        <FormControl fullWidth>
-          <TextField
-            id="clientDateMonth"
-            label="Mes retirado"
-            value={clientDateMonth}
-            variant="standard"
-            onChange={(e) => setClientDateMonth(e.target.value)}
-
-          />
-        </FormControl>
-
-        <FormControl fullWidth>
-          <TextField
-          id="clientHour"
-          label="Hora retirado"
-          value={clientHour}
-          variant="standard"
-          onChange={(e) => setClientHour(e.target.value)}
-
-          />
-        </FormControl>
+          <FormControl fullWidth>
+            <TextField
+              id="departureDateDay"
+              label="Dia retiro"
+              value={departureDateDay}
+              select
+              variant="standard"
+              onChange={(e) => setDepartureDateDay(e.target.value)}
+              style={{ width: "25%" }}
+            >
+              {[...Array(31)].map((_, i) => (
+                <MenuItem key={i + 1} value={i + 1}>
+                  {i + 1}
+                </MenuItem>
+              ))}
+            </TextField>
+          </FormControl>
+          <FormControl fullWidth>
+            <TextField
+              id="departureDateMonth"
+              label="Mes retiro"
+              value={departureDateMonth}
+              select
+              variant="standard"
+              onChange={(e) => setDepartureDateMonth(e.target.value)}
+              style={{ width: "25%" }}
+            >
+              {[...Array(12)].map((_, i) => (
+                <MenuItem key={i + 1} value={i + 1}>
+                  {i + 1}
+                </MenuItem>
+              ))}
+            </TextField>
+          </FormControl>
+          <FormControl fullWidth>
+            <TextField
+              id="departureHour"
+              label="Hora retiro"
+              value={departureHour}
+              style={{ width: "25%" }}
+              variant="standard"
+              onChange={(e) => setDepartureHour(e.target.value)}
+            />
+          </FormControl>
+          <FormControl fullWidth>
+            <TextField
+              id="clientDateDay"
+              label="Dia cliente"
+              value={clientDateDay}
+              select
+              variant="standard"
+              onChange={(e) => setClientDateDay(e.target.value)}
+              style={{ width: "25%" }}
+            >
+              {[...Array(31)].map((_, i) => (
+                <MenuItem key={i + 1} value={i + 1}>
+                  {i + 1}
+                </MenuItem>
+              ))}
+            </TextField>
+          </FormControl>
+          <FormControl fullWidth>
+            <TextField
+              id="clientDateMonth"
+              label="Mes cliente"
+              value={clientDateMonth}
+              select
+              variant="standard"
+              onChange={(e) => setClientDateMonth(e.target.value)}
+              style={{ width: "25%" }}
+            >
+              {[...Array(12)].map((_, i) => (
+                <MenuItem key={i + 1} value={i + 1}>
+                  {i + 1}
+                </MenuItem>
+              ))}
+            </TextField>
+          </FormControl>
+          <FormControl fullWidth>
+            <TextField
+              id="clientHour"
+              label="Hora cliente"
+              value={clientHour}
+              style={{ width: "25%" }}
+              variant="standard"
+              onChange={(e) => setClientHour(e.target.value)}
+            />
+          </FormControl>
 
 
-
-
-
-
-
-
-
-        <FormControl>
-          <br />
-          <Button 
+          <Button
             variant="contained"
-            //color="info"
-            onClick={(e) => saveRecord(e)}
-            style={{ marginLeft: "0.5rem", color  : "white", backgroundColor: "#D6589F"}}
+            color="primary"
+            size="large"
             startIcon={<SaveIcon />}
+            onClick={saveRepair, saveDetalle}
           >
-            Grabar
+            Guardar
           </Button>
-        </FormControl>
-        
-      </form>
-      <hr />
-      <Link to="/record/list">Back to List</Link>
-    </Box>
+        </form>
+      </Box>
     </Paper>
   );
 };
 
-export default AddEditRecord;
+export default AddEditRepair;

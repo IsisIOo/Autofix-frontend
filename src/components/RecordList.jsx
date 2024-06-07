@@ -71,6 +71,12 @@ const RecordList = () => {
   };
   
 
+//trato de crear un boton que redireccione a los detalles del costo PARA PEP2
+const handleDetailsCost2 = (patent) => {
+  console.log("Printing patente", patent);
+  navigate(`/Cost/details-2/${patent}`);
+};
+
 
 
 
@@ -111,9 +117,6 @@ const RecordList = () => {
               Hora admision
             </TableCell>
             <TableCell align="right" sx={{ fontWeight: "bold" }}>
-              Tipo reparacion
-            </TableCell>
-            <TableCell align="right" sx={{ fontWeight: "bold" }}>
               Dia retiro
             </TableCell>
             <TableCell align="right" sx={{ fontWeight: "bold" }}>
@@ -144,7 +147,6 @@ const RecordList = () => {
               <TableCell align="left">{record.admissionDateDay}</TableCell>
               <TableCell align="left">{record.admissionDateMonth}</TableCell>
               <TableCell align="right">{record.admissionHour}</TableCell>
-              <TableCell align="right">{record.repairType}</TableCell>
               <TableCell align="right">{record.departureDateDay}</TableCell>
               <TableCell align="right">{record.departureDateMonth}</TableCell>
               <TableCell align="right">{record.departureHour}</TableCell>
@@ -159,11 +161,11 @@ const RecordList = () => {
                   variant="contained"
                   color="info"
                   size="small"
-                  onClick={() => handleDetailsCost(record.patent)}
+                  onClick={() => handleDetailsCost2(record.patent)}
                   style={{ marginLeft: "0.5rem" }}
                   startIcon={<InfoIcon />}
                 >
-                  Detalles Costo
+                  Detalles
                 </Button>
 
 

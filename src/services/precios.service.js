@@ -1,4 +1,5 @@
 import httpPrecios from "../http-common";
+//este es el de pep 2, donde estan los precios guardados en db
 
 const getAll = () => {
     return httpPrecios.get('/api/repair-list/');
@@ -21,4 +22,4 @@ const remove = id => {
 }
 
 
-export default { getAll, create, get, update, remove };
+export default { getAll, create, update, remove };

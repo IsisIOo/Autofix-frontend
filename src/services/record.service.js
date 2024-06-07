@@ -13,7 +13,7 @@ const get = patent => {
     return httpRecord.get(`/api/v1/record/patent1/${patent}`);
 }
 
-const update = data => { //put cost en record
+const update = data => { //put cost en record, en realidad creo que edita
     return httpRecord.put('/api/v1/patent-put/${patent}', data);
 }
 

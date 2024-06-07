@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import carService from "../services/precios.service";
+import preciosService from "../services/precios.service";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -23,7 +23,7 @@ const PreciosList = () => {
       .getAll()
       .then((response) => {
         console.log("Mostrando listado de todos los precios ingresados.", response.data);
-        setCars(response.data);
+        setPrecios(response.data);
       })
       .catch((error) => {
         console.log(
@@ -71,14 +71,7 @@ const PreciosList = () => {
         to="/car/add"
         style={{ textDecoration: "none", marginBottom: "1rem" }}
       >
-        <Button
-          variant="contained"
-          color="primary"
-          style={{ marginLeft: "0.5rem", color  : "white", backgroundColor: "#D6589F"}}
-          startIcon={<PersonAddIcon />}
-        >
-          Añadir Auto
-        </Button>
+
       </Link>
 
       <br /> <br />
@@ -114,28 +107,7 @@ const PreciosList = () => {
           <TableCell align="right">{precio.electricAmount}</TableCell> {/* Año de producción */}
 
           <TableCell>
-                <Button
-                  variant="contained"
-                  color="info"
-                  size="small"
-                  onClick={() => handleEdit(car.patent)}
-                  style={{ marginLeft: "0.5rem" }}
-                  startIcon={<EditIcon />}
-                  
-                >
-                  Editar vehiculo
-                </Button>
 
-                <Button
-                  variant="contained"
-                  color="error"
-                  size="small"
-                  onClick={() => handleDelete(car.id)}
-                  style={{ marginLeft: "0.5rem" }}
-                  startIcon={<DeleteIcon />}
-                >
-                  Eliminar
-                </Button>
               </TableCell>
             </TableRow>
           ))}
