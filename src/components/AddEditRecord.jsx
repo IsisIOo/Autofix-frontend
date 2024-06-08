@@ -39,7 +39,7 @@ const AddEditRepair = () => {
   const navigate = useNavigate();
 
 
-  // Función para manejar el cambio en los tipos de reparación seleccionados
+  // Función para manejar el cambio en los tipos de reparación seleccionados NO BORRAR
   const handleRepairTypeChange = (event) => {
     const {
       target: { value },
@@ -59,6 +59,7 @@ const AddEditRepair = () => {
       admissionDateDay,
       admissionDateMonth,
       admissionHour,
+      repairType: repairType.join(", "), // Convertir el array a una cadena para guardarlo
       departureDateDay,
       departureDateMonth,
       departureHour,
@@ -100,6 +101,10 @@ const AddEditRepair = () => {
     const saveDetalle = (o) => {
       o.preventDefault();
       const detalle = {
+        patent,
+        admissionDateDay,
+        admissionDateMonth,
+        admissionHour,
         repairType: repairType.join(", "), // Convertir el array a una cadena para guardarlo
         id,
       };
@@ -108,7 +113,6 @@ const AddEditRepair = () => {
       detalleService.newdetalle(detalle)
         .then((response) => {
           console.log("Detalle ha sido añadido.", response.data);
-          navigate("/record/list");
         })
         .catch((error) => {
           console.log("Ha ocurrido un error al intentar crear el detalle.", error);
@@ -150,13 +154,13 @@ const AddEditRepair = () => {
     "Servicio del Sistema de Refrigeración",
     "Reparaciones del Motor",
     "Reparaciones de la transmisión",
-    "Reparación del Sistema Eléctrico",
+    "Reparacion del Sistema Electrico",
     "Reparaciones del Sistema de Escape",
-    "Reparación de Neumáticos y Ruedas",
-    "Reparaciones de la Suspensión y la Dirección",
-    "Reparación del Sistema de Aire Acondicionado y Calefacción",
+    "Reparacion de Neumaticos y Ruedas",
+    "Reparaciones de la Suspension y la Direccion",
+    "Reparación del Sistema de Aire Acondicionado y Calefaccion",
     "Reparaciones del Sistema de Combustible",
-    "Reparación y Reemplazo del Parabrisas y Cristales",
+    "Reparacion y Reemplazo del Parabrisas y Cristales",
   ];
 
   return (
@@ -359,7 +363,7 @@ const AddEditRepair = () => {
             color="primary"
             size="large"
             startIcon={<SaveIcon />}
-            onClick={saveRepair, saveDetalle}
+            onClick={saveRepair}
           >
             Guardar
           </Button>

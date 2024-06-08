@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import recordService from "../services/record.service";
+import detalleService from "../services/detalle.service";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -14,17 +15,17 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import InfoIcon from '@mui/icons-material/Info';
 
-const RecordList = () => {
-  const [records, setRecord] = useState([]);
+const RepairList = () => {
+  const [repairs, setRepair] = useState([]);
 
   const navigate = useNavigate();
 
   const init = () => {
-    recordService
+    detalleService
       .getAll()
       .then((response) => {
         console.log("Mostrando listado de todos los historiales ingresados.", response.data);
-        setRecord(response.data);
+        setRepair(response.data);
       })
       .catch((error) => {
         console.log(
@@ -46,7 +47,7 @@ const RecordList = () => {
       "¿Esta seguro que desea borrar este historial?"
     );
     if (confirmDelete) {
-      recordService
+      detalleService
         .remove(id)
         .then((response) => {
           console.log("historial ha sido eliminado.", response.data);
@@ -135,25 +136,38 @@ const handleDetailsCost2 = (patent) => {
               Hora retirado
             </TableCell>    
             <TableCell align="left" sx={{ fontWeight: "bold" }}>
+              Costo IVA
+            </TableCell> 
+            <TableCell align="left" sx={{ fontWeight: "bold" }}>
+              Descuentos
+            </TableCell> 
+            <TableCell align="left" sx={{ fontWeight: "bold" }}>
+              Recargos
+            </TableCell>  
+            <TableCell align="left" sx={{ fontWeight: "bold" }}>
               Costo Total
             </TableCell> 
+
           </TableRow>
         </TableHead>
         <TableBody>
-          {records.map((record) => (
-            <TableRow key={record.id}>
-              <TableCell align="left">{record.patent}</TableCell>
-              <TableCell align="left">{record.admissionDateDayName}</TableCell>
-              <TableCell align="left">{record.admissionDateDay}</TableCell>
-              <TableCell align="left">{record.admissionDateMonth}</TableCell>
-              <TableCell align="right">{record.admissionHour}</TableCell>
-              <TableCell align="right">{record.departureDateDay}</TableCell>
-              <TableCell align="right">{record.departureDateMonth}</TableCell>
-              <TableCell align="right">{record.departureHour}</TableCell>
-              <TableCell align="right">{record.clientDateDay}</TableCell>
-              <TableCell align="right">{record.clientDateMonth}</TableCell>
-              <TableCell align="right">{record.clientHour}</TableCell>
-              <TableCell align="right">{record.totalAmount}</TableCell>
+          {repairs.map((repair) => (
+            <TableRow key={repair.id}>
+              <TableCell align="left">{repair.patent}</TableCell>
+              <TableCell align="left">{repair.admissionDateDayName}</TableCell>
+              <TableCell align="left">{repair.admissionDateDay}</TableCell>
+              <TableCell align="left">{repair.admissionDateMonth}</TableCell>
+              <TableCell align="right">{repair.admissionHour}</TableCell>
+              <TableCell align="right">{repair.departureDateDay}</TableCell>
+              <TableCell align="right">{repair.departureDateMonth}</TableCell>
+              <TableCell align="right">{repair.departureHour}</TableCell>
+              <TableCell align="right">{repair.clientDateDay}</TableCell>
+              <TableCell align="right">{repair.clientDateMonth}</TableCell>
+              <TableCell align="right">{repair.clientHour}</TableCell>
+              <TableCell align="right">{repair.totalIva}</TableCell>
+              <TableCell align="right">{repair.totalDiscounts}</TableCell>
+              <TableCell align="right">{repair.totalRecharges}</TableCell>
+              <TableCell align="right">{repair.totalAmount}</TableCell>
               
 
               <TableCell>
@@ -161,7 +175,7 @@ const handleDetailsCost2 = (patent) => {
                   variant="contained"
                   color="info"
                   size="small"
-                  onClick={() => handleDetailsCost2(record.patent)}
+                  onClick={() => handleDetailsCost2(repair.patent)}
                   style={{ marginLeft: "0.5rem" }}
                   startIcon={<InfoIcon />}
                 >
@@ -173,7 +187,7 @@ const handleDetailsCost2 = (patent) => {
                   variant="contained"
                   color="error"
                   size="small"
-                  onClick={() => handleDelete(record.id)}
+                  onClick={() => handleDelete(repair.id)}
                   style={{ marginLeft: "0.5rem" }}
                   startIcon={<DeleteIcon />}
                 >
@@ -191,4 +205,4 @@ const handleDetailsCost2 = (patent) => {
   );
 };
 
-export default RecordList;
+export default RepairList;

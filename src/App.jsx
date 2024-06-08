@@ -20,7 +20,7 @@ import AddEditTime from './components/AddEditTime'
 import TablaTipo from './components/TablaTipo'
 import TablaRep from './components/TablaRep'
 import PreciosList from './components/PreciosList'
-//import Detalles2 from './components/Detalles2'
+import Detalles2 from './components/Detalles2'
 
 
 
@@ -41,7 +41,7 @@ function App() {
 
               <Route path = "/cost/list" element = {<CostList/>} />
               <Route path = "/cost/add" element = {<AddEditCost/>} />
-              <Route path = {"/cost/details/:patent"}  element = {<CostDetails/>} />
+              <Route path = {"/cost/details-2/:patent"}  element = {<Detalles2/>} />
 
               {/*pep2*/} 
 

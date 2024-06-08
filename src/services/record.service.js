@@ -2,7 +2,7 @@ import httpRecord from "../http-common";
 
 
 const getAll = () => {
-    return httpRecord.get('/api/repair/');
+    return httpRecord.get('/api/repairs/');
 }
 
 const create = data => {

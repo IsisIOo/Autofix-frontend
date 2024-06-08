@@ -2,7 +2,7 @@ import httpDetalle from "../http-common";
 import httpRepair from "../http-common";
 
 const getAll = () => {
-    return httpRepair.get('/api/repair/');
+    return httpRepair.get('/api/repairs/');
 }
 
 const getOneDetalle = patent => {
@@ -10,11 +10,11 @@ const getOneDetalle = patent => {
 }
 
 const getOneRepair = patent => {
-    return httpRepair.get(`/api/repair/repair-patent/${patent}`);
+    return httpRepair.get(`/api/repairs/repair-patent/${patent}`);
 }
 
 const newrepair = data => {
-    return httpRepair.post("/api/repair/newRepair/", data);
+    return httpRepair.post("/api/repairs/newRepair/", data);
 }
 
 const newdetalle = data => {
@@ -22,7 +22,7 @@ const newdetalle = data => {
 }
 
 const remove = id => {
-    return httpRecord.delete(`/api/repair/repair-id/${id}`);
+    return httpRepair.delete(`/api/repairs/repair-id/${id}`);
 }
 
 
