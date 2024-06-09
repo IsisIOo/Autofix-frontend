@@ -65,22 +65,9 @@ export default function Sidemenu({ open, toggleDrawer }) {
           <ListItemIcon>
             <ElectricCarIcon />
           </ListItemIcon>
-          <ListItemText primary="Repacion vs Motor" />
+          <ListItemText primary="Reporte 1" />
         </ListItemButton>
-        
-        <ListItemButton onClick={() => navigate("/list/time")}>
-          <ListItemIcon>
-            <ScheduleIcon/>
-          </ListItemIcon>
-          <ListItemText primary="Tiempo espera" />
-        </ListItemButton>
-        
-        <ListItemButton onClick={() => navigate("/list/reparacion")}>
-          <ListItemIcon>
-            <ConstructionIcon/>
-          </ListItemIcon>
-          <ListItemText primary="Cantidad reparaciones" />
-        </ListItemButton>
+      
 
         <ListItemButton onClick={() => navigate("/repair-list/price")}>
           <ListItemIcon>

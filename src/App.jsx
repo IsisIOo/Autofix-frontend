@@ -21,6 +21,8 @@ import TablaTipo from './components/TablaTipo'
 import TablaRep from './components/TablaRep'
 import PreciosList from './components/PreciosList'
 import Detalles2 from './components/Detalles2'
+import Reporte1 from './components/Reporte1'
+//import AddEditreporte1 from './components/AddEditreporte1'
 
 
 
@@ -51,10 +53,14 @@ function App() {
               <Route path = {"/list/time"}  element = {<TimeList/>} /> 
               <Route path = "/time/add" element = {<AddEditTime/>} />
 
-              <Route path = "/list/type" element = {<TablaTipo/>} />
+              <Route path = "/list/type" element = {<Reporte1/>} />
+
+              
               <Route path = "/list/reparacion" element = {<TablaRep/>} />
 
               <Route path = "/repair-list/price" element = {<PreciosList/>} />
+              
+
 
             </Routes>
           </div>
