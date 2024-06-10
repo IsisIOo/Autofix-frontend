@@ -54,18 +54,11 @@ export default function Sidemenu({ open, toggleDrawer }) {
           <ListItemText primary="Historial de autos" />
         </ListItemButton>
 
-        <ListItemButton onClick={() => navigate("/cost/list")}>
+        <ListItemButton onClick={() => navigate("/todo/car-repair")}>
           <ListItemIcon>
-            <PaidIcon />
+            <PaidIcon/>
           </ListItemIcon>
-          <ListItemText primary="Planilla de Costos" />
-        </ListItemButton>
-
-        <ListItemButton onClick={() => navigate("/list/type")}>
-          <ListItemIcon>
-            <ElectricCarIcon />
-          </ListItemIcon>
-          <ListItemText primary="Reporte 1" />
+          <ListItemText primary="Datos totales" />
         </ListItemButton>
       
 
@@ -74,6 +67,22 @@ export default function Sidemenu({ open, toggleDrawer }) {
             <PaidIcon/>
           </ListItemIcon>
           <ListItemText primary="Precios del taller" />
+        </ListItemButton>
+
+
+        <ListItemButton onClick={() => navigate("/list/type")}>
+          <ListItemIcon>
+            <ElectricCarIcon />
+          </ListItemIcon>
+          <ListItemText primary="Reporte 1" />
+        </ListItemButton>
+
+
+      <ListItemButton onClick={() => navigate("/list/motor")}>
+          <ListItemIcon>
+            <PaidIcon/>
+          </ListItemIcon>
+          <ListItemText primary="Reporte 2" />
         </ListItemButton>
 
 

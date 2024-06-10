@@ -88,9 +88,6 @@ const Reporte1List = () => {
             <TableCell align="left" sx={{ fontWeight: "bold" }}>
               Mes 
             </TableCell>
-            <TableCell align="left" sx={{ fontWeight: "bold" }}>
-              Tipo de reparacion 
-            </TableCell>
 
           </TableRow>
         </TableHead>
@@ -100,7 +97,6 @@ const Reporte1List = () => {
               key={reporte1.id}
             >
           <TableCell align="left">{reporte1.mes}</TableCell>
-          <TableCell align="right">{reporte1.repairtype}</TableCell>
 
 
           <TableCell>

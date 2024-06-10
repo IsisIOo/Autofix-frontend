@@ -106,31 +106,19 @@ const handleDetailsCost2 = (patent) => {
               Patente
             </TableCell>
             <TableCell align="left" sx={{ fontWeight: "bold" }}>
-              Dia admision
+              Fecha admision
             </TableCell>            
-            <TableCell align="left" sx={{ fontWeight: "bold" }}>
-              Dia Admision
-            </TableCell>
-            <TableCell align="left" sx={{ fontWeight: "bold" }}>
-              Mes admision
-            </TableCell>
             <TableCell align="right" sx={{ fontWeight: "bold" }}>
               Hora admision
             </TableCell>
             <TableCell align="right" sx={{ fontWeight: "bold" }}>
-              Dia retiro
+              Fecha retiro
             </TableCell>
-            <TableCell align="right" sx={{ fontWeight: "bold" }}>
-              Mes retiro
-            </TableCell> 
             <TableCell align="left" sx={{ fontWeight: "bold" }}>
               Hora retiro
             </TableCell>
             <TableCell align="left" sx={{ fontWeight: "bold" }}>
-              Dia retirado
-            </TableCell>
-            <TableCell align="right" sx={{ fontWeight: "bold" }}>
-              Mes retirado
+              Fecha retirado
             </TableCell>
             <TableCell align="left" sx={{ fontWeight: "bold" }}>
               Hora retirado
@@ -153,21 +141,24 @@ const handleDetailsCost2 = (patent) => {
         <TableBody>
           {repairs.map((repair) => (
             <TableRow key={repair.id}>
-              <TableCell align="left">{repair.patent}</TableCell>
-              <TableCell align="left">{repair.admissionDateDayName}</TableCell>
-              <TableCell align="left">{repair.admissionDateDay}</TableCell>
-              <TableCell align="left">{repair.admissionDateMonth}</TableCell>
-              <TableCell align="right">{repair.admissionHour}</TableCell>
-              <TableCell align="right">{repair.departureDateDay}</TableCell>
-              <TableCell align="right">{repair.departureDateMonth}</TableCell>
-              <TableCell align="right">{repair.departureHour}</TableCell>
-              <TableCell align="right">{repair.clientDateDay}</TableCell>
-              <TableCell align="right">{repair.clientDateMonth}</TableCell>
-              <TableCell align="right">{repair.clientHour}</TableCell>
-              <TableCell align="right">{repair.totalIva}</TableCell>
-              <TableCell align="right">{repair.totalDiscounts}</TableCell>
-              <TableCell align="right">{repair.totalRecharges}</TableCell>
-              <TableCell align="right">{repair.totalAmount}</TableCell>
+          <TableCell align="left">{repair.patent}</TableCell>
+          <TableCell align="left">
+            {` ${repair.admissionDateDayName}, ${repair.admissionDateDay}/${repair.admissionDateMonth}/2024`}
+          </TableCell>
+          <TableCell align="right">{repair.admissionHour}</TableCell>
+          <TableCell align="left">
+            {`${repair.departureDateDay}/${repair.departureDateMonth}/2024`}
+          </TableCell>
+          <TableCell align="right">{repair.departureHour}</TableCell>
+          <TableCell align="left">
+            {`${repair.clientDateDay}/${repair.clientDateMonth}/2024`}
+          </TableCell>
+          <TableCell align="right">{repair.clientHour}</TableCell>
+          <TableCell align="right">{repair.totalIva}</TableCell>
+          <TableCell align="right">{repair.totalDiscounts}</TableCell>
+          <TableCell align="right">{repair.totalRecharges}</TableCell>
+          <TableCell align="right">{repair.totalAmount}</TableCell>
+
               
 
               <TableCell>
@@ -180,6 +171,17 @@ const handleDetailsCost2 = (patent) => {
                   startIcon={<InfoIcon />}
                 >
                   Detalles
+                </Button>
+
+                <Button
+                  variant="contained"
+                  color="error"
+                  size="small"
+                  //onClick={() => handleDelete(repair.id)}
+                  style={{ marginLeft: "0.5rem" }}
+                  startIcon={<DeleteIcon />}
+                >
+                Agregar bono 
                 </Button>
 
 

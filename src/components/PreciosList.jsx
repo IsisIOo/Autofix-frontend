@@ -108,6 +108,17 @@ const PreciosList = () => {
 
           <TableCell>
 
+          <Button
+                  variant="contained"
+                  color="error"
+                  size="small"
+                  onClick={() => handleDelete(repair.id)}
+                  style={{ marginLeft: "0.5rem" }}
+                  startIcon={<DeleteIcon />}
+                >
+                Eliminar 
+                </Button>
+                
               </TableCell>
             </TableRow>
           ))}
