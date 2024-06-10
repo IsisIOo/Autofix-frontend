@@ -14,6 +14,8 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import InfoIcon from '@mui/icons-material/Info';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import { indigo } from '@mui/material/colors';
 
 const RepairList = () => {
   const [repairs, setRepair] = useState([]);
@@ -175,11 +177,10 @@ const handleDetailsCost2 = (patent) => {
 
                 <Button
                   variant="contained"
-                  color="error"
+                  style={{ backgroundColor: 'purple', color: 'white', marginLeft: "0.5rem" }}
                   size="small"
                   //onClick={() => handleDelete(repair.id)}
-                  style={{ marginLeft: "0.5rem" }}
-                  startIcon={<DeleteIcon />}
+                  startIcon={<MonetizationOnIcon />}
                 >
                 Agregar bono 
                 </Button>

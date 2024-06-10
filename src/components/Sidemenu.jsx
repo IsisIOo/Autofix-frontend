@@ -21,6 +21,8 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import ElectricCarIcon from '@mui/icons-material/ElectricCar';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import ConstructionIcon from '@mui/icons-material/Construction';
+import FactCheckIcon from '@mui/icons-material/FactCheck';
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 
 export default function Sidemenu({ open, toggleDrawer }) {
   const navigate = useNavigate();
@@ -56,7 +58,7 @@ export default function Sidemenu({ open, toggleDrawer }) {
 
         <ListItemButton onClick={() => navigate("/todo/car-repair")}>
           <ListItemIcon>
-            <PaidIcon/>
+            <FactCheckIcon/>
           </ListItemIcon>
           <ListItemText primary="Datos totales" />
         </ListItemButton>
@@ -80,7 +82,7 @@ export default function Sidemenu({ open, toggleDrawer }) {
 
       <ListItemButton onClick={() => navigate("/list/motor")}>
           <ListItemIcon>
-            <PaidIcon/>
+            <AssignmentTurnedInIcon/>
           </ListItemIcon>
           <ListItemText primary="Reporte 2" />
         </ListItemButton>

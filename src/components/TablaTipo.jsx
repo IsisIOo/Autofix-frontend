@@ -10,7 +10,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 
 const TablaReparacionTipo = () => {
-  const [repairData, setRepairData] = useState([]);
+  const [repairData, setRepairData] = useState({});
 
   const repairTypes = [
     "Reparaciones del Sistema de Frenos",
@@ -32,56 +32,53 @@ const TablaReparacionTipo = () => {
     fetchRepairData();
   }, []);
 
-  const fetchRepairData = () => {
-    Promise.all([detalleService.getAll(), carService.getAll()])
-      .then(([repairResponse, carResponse]) => {
-        const repairs = repairResponse.data;
-        const cars = carResponse.data;
+const fetchRepairData = () => {
+  Promise.all([detalleService.getAll(), carService.getAll()])
+    .then(([repairResponse, carResponse]) => {
+      const repairs = repairResponse.data;
+      const cars = carResponse.data;
 
-        // Crear un objeto para almacenar las reparaciones agrupadas
-        const groupedRepairs = {};
-        const totalCostPerVehicle = {};
-        const totalVehiclesPerRepair = {};
+      // Crear un objeto para almacenar las reparaciones agrupadas
+      const groupedRepairs = {};
 
-        // Inicializar el objeto con todos los tipos de reparaciones y vehículos
-        repairTypes.forEach(repairType => {
-          groupedRepairs[repairType] = {};
-          vehicleTypes.forEach(vehicleType => {
-            groupedRepairs[repairType][vehicleType] = {
-              numVehicles: 0,
-              totalCost: 0,
-            };
-          });
+      // Inicializar el objeto con todos los tipos de reparaciones y vehículos
+      repairTypes.forEach(repairType => {
+        groupedRepairs[repairType] = {};
+        vehicleTypes.forEach(vehicleType => {
+          groupedRepairs[repairType][vehicleType] = {
+            numVehicles: 0,
+            totalCost: 0,
+          };
         });
-
-        // Iterar sobre cada reparación y agruparlas
-        repairs.forEach((repair) => {
-          const car = cars.find((car) => car.patent === repair.patent);
-          if (car) {
-            const { repairType } = repair;
-            const { motorType } = car;
-            
-            groupedRepairs[repairType][motorType].numVehicles++;
-            groupedRepairs[repairType][motorType].totalCost += repair.totalAmount;
-
-            if (!totalCostPerVehicle[motorType]) {
-              totalCostPerVehicle[motorType] = 0;
-            }
-            totalCostPerVehicle[motorType] += repair.totalAmount;
-
-            if (!totalVehiclesPerRepair[repairType]) {
-              totalVehiclesPerRepair[repairType] = 0;
-            }
-            totalVehiclesPerRepair[repairType]++;
-          }
-        });
-
-        setRepairData(groupedRepairs);
-      })
-      .catch((error) => {
-        console.error("Error al obtener los datos de reparaciones:", error);
       });
-  };
+
+      // Iterar sobre cada reparación y agruparlas
+      repairs.forEach((repair) => {
+        const car = cars.find((car) => car.patent === repair.patent);
+        if (car) {
+          const { repairType } = repair;
+          const { type } = car;
+
+          // Si hay múltiples tipos de reparación para un vehículo, dividirlos y agregarlos por separado
+          const repairTypes = repairType.split(", ");
+
+          repairTypes.forEach(repairType => {
+            if (groupedRepairs[repairType] && groupedRepairs[repairType][type]) {
+              groupedRepairs[repairType][type].numVehicles++;
+              groupedRepairs[repairType][type].totalCost += repair.totalAmount;
+            }
+          });
+        }
+      });
+
+      console.log("Datos de reparaciones agrupadas:", groupedRepairs);
+      setRepairData(groupedRepairs);
+    })
+    .catch((error) => {
+      console.error("Error al obtener los datos de reparaciones:", error);
+    });
+};
+
 
   return (
     <TableContainer component={Paper}>

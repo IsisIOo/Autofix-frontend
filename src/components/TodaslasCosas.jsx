@@ -143,26 +143,8 @@ const RepairList = () => {
                 <TableCell align="right">{item.clientHour}</TableCell>
 
                 <TableCell>
-                  <Button
-                    variant="contained"
-                    color="info"
-                    size="small"
-                    onClick={() => handleDetailsCost2(item.patent)}
-                    style={{ marginLeft: "0.5rem" }}
-                    startIcon={<InfoIcon />}
-                  >
-                    Detalles
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    size="small"
-                    onClick={() => handleDelete(item.id)}
-                    style={{ marginLeft: "0.5rem" }}
-                    startIcon={<DeleteIcon />}
-                  >
-                    Eliminar
-                  </Button>
+
+
                 </TableCell>
               </TableRow>
             ))}
