@@ -39,15 +39,19 @@ const RepairList = () => {
   };
 
   const mergeData = () => {
-    const merged = repairs.map(repairs => {
-      const car = cars.find(c => c.patent === repairs.patent); // Ajusta según la relación entre detalle y car
+    const merged = repairs.map(repair => {
+      const car = cars.find(c => c.patent === repair.patent); // Ajusta según la relación entre detalle y car
+      const totalRepairs = repair.totalAmount - (repair.totalRecharges + repair.totalDiscounts + repair.totalIva);
+      const subTotal = totalRepairs + repair.totalRecharges - repair.totalDiscounts;
       return {
-        ...repairs,
+        ...repair,
         brand: car ? car.brand : '',
         model: car ? car.model : '',
         type: car ? car.type : '',
         productionYear: car ? car.productionYear : '',
         motorType: car ? car.motorType : '',
+        totalRepairs: totalRepairs,
+        subTotal: subTotal
       };
     });
     setMergedData(merged);
@@ -100,14 +104,17 @@ const RepairList = () => {
               <TableCell align="left" sx={{ fontWeight: "bold" }}>Marca</TableCell>
               <TableCell align="left" sx={{ fontWeight: "bold" }}>Modelo</TableCell>
               <TableCell align="left" sx={{ fontWeight: "bold" }}>Tipo</TableCell>
-              <TableCell align="left" sx={{ fontWeight: "bold" }}>Año Producción</TableCell>
+              <TableCell align="left" sx={{ fontWeight: "bold" }}>Año Fabricación</TableCell>
               <TableCell align="left" sx={{ fontWeight: "bold" }}>Tipo Motor</TableCell>
-              <TableCell align="left" sx={{ fontWeight: "bold" }}>Fecha Admisión</TableCell>
-              <TableCell align="left" sx={{ fontWeight: "bold" }}>Hora Admisión</TableCell>
-              <TableCell align="left" sx={{ fontWeight: "bold" }}>Total IVA</TableCell>
-              <TableCell align="left" sx={{ fontWeight: "bold" }}>Total Descuentos</TableCell>
+              <TableCell align="left" sx={{ fontWeight: "bold" }}>Fecha Ingreso</TableCell>
+              <TableCell align="left" sx={{ fontWeight: "bold" }}>Hora Ingreso</TableCell>
+              <TableCell align="left" sx={{ fontWeight: "bold" }}>Monto total reparaciones</TableCell>
               <TableCell align="left" sx={{ fontWeight: "bold" }}>Total Recargos</TableCell>
+              <TableCell align="left" sx={{ fontWeight: "bold" }}>Total Descuentos</TableCell>
+              <TableCell align="left" sx={{ fontWeight: "bold" }}>SUB Total</TableCell>
+              <TableCell align="left" sx={{ fontWeight: "bold" }}>Monto IVA</TableCell>
               <TableCell align="left" sx={{ fontWeight: "bold" }}>Costo Total</TableCell>
+              
               <TableCell align="left" sx={{ fontWeight: "bold" }}>Fecha de salida</TableCell>
               <TableCell align="left" sx={{ fontWeight: "bold" }}>Hora de Salida</TableCell>
               <TableCell align="left" sx={{ fontWeight: "bold" }}>Fecha Retirado</TableCell>
@@ -125,9 +132,11 @@ const RepairList = () => {
                 <TableCell align="left">{item.motorType}</TableCell>
                 <TableCell align="left">{`${item.admissionDateDay}/${item.admissionDateMonth}/2024`}</TableCell>
                 <TableCell align="left">{item.admissionHour}</TableCell>
-                <TableCell align="left">{item.totalIva}</TableCell>
-                <TableCell align="left">{item.totalDiscounts}</TableCell>
+                <TableCell align="left">{item.totalRepairs}</TableCell>
                 <TableCell align="left">{item.totalRecharges}</TableCell>
+                <TableCell align="left">{item.totalDiscounts}</TableCell>
+                <TableCell align="left">{item.subTotal}</TableCell>
+                <TableCell align="left">{item.totalIva}</TableCell>
                 <TableCell align="left">{item.totalAmount}</TableCell>
                 
                 <TableCell align="left">
@@ -143,7 +152,6 @@ const RepairList = () => {
                 <TableCell align="right">{item.clientHour}</TableCell>
 
                 <TableCell>
-
 
                 </TableCell>
               </TableRow>

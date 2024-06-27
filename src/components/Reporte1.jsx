@@ -1,135 +1,182 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import carService from "../services/car.service";
+import React, { useEffect, useState } from "react";
+import detalleService from "../services/detalle.service";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import reporte1Service from "../services/reporte1.service";
 
-const Reporte1List = () => {
-  const [reporte1, setReporte1] = useState([]);
+const TablaReparacionMes = () => {
+  const [repairData, setRepairData] = useState({});
+  const [month, setMonth] = useState('');
 
-  const navigate = useNavigate();
+  const repairTypes = [
+    "Reparaciones del Sistema de Frenos",
+    "Servicio del Sistema de Refrigeración",
+    "Reparaciones del Motor",
+    "Reparaciones de la Transmisión",
+    "Reparación del Sistema Eléctrico",
+    "Reparaciones del Sistema de Escape",
+    "Reparación de Neumáticos y Ruedas",
+    "Reparaciones de la Suspensión y la Dirección",
+    "Reparación del Sistema de Aire Acondicionado y Calefacción",
+    "Reparaciones del Sistema de Combustible",
+    "Reparación y Reemplazo del Parabrisas y Cristales"
+  ];
 
-  const init = () => {
-    reporte1Service
-      .getAll()
-      .then((response) => {
-        console.log("Mostrando listado de todos los reportes ingresados.", response.data);
-        setReporte1(response.data);
+  const fetchRepairData = (monthInt) => {
+    Promise.all([detalleService.getAll()])
+      .then(([repairResponse]) => {
+        const repairs = repairResponse.data;
+
+        const previousMonth = monthInt === 1 ? 12 : monthInt - 1;
+        const nextMonth = monthInt === 12 ? 1 : monthInt + 1;
+
+        const filteredRepairs = {
+          current: repairs.filter(repair => repair.admissionDateMonth === monthInt),
+          previous: repairs.filter(repair => repair.admissionDateMonth === previousMonth),
+          next: repairs.filter(repair => repair.admissionDateMonth === nextMonth),
+        };
+
+        const groupedRepairs = {
+          current: {},
+          previous: {},
+          next: {},
+        };
+
+        ["current", "previous", "next"].forEach(timePeriod => {
+          repairTypes.forEach(repairType => {
+            groupedRepairs[timePeriod][repairType] = {
+              numVehicles: 0,
+              totalCost: 0,
+            };
+          });
+        });
+
+        ["current", "previous", "next"].forEach(timePeriod => {
+          filteredRepairs[timePeriod].forEach(repair => {
+            const { repairType, totalAmount } = repair;
+
+            repairTypes.forEach(type => {
+              if (repairType.includes(type)) {
+                groupedRepairs[timePeriod][type].numVehicles++;
+                groupedRepairs[timePeriod][type].totalCost += totalAmount;
+              }
+            });
+          });
+        });
+
+        console.log("Datos de reparaciones agrupadas:", groupedRepairs);
+        setRepairData(groupedRepairs);
       })
       .catch((error) => {
-        console.log(
-          "Se ha producido un error al intentar mostrar listado de todos los reportes.",
-          error
-        );
+        console.error("Error al obtener los datos de reparaciones:", error);
       });
   };
 
-  useEffect(() => {
-    init();
-  }, []);
-
-  const handleDelete = (id) => {
-    console.log("Printing id", id);
-    const confirmDelete = window.confirm(
-      "¿Esta seguro que desea borrar este reporte?"
-    );
-    if (confirmDelete) {
-      reporte1Service
-        .remove(id)
-        .then((response) => {
-          console.log("auto ha sido eliminado.", response.data);
-          init();
-        })
-        .catch((error) => {
-          console.log(
-            "Se ha producido un error al intentar eliminar al auto",
-            error
-          );
-        });
+  const handleMonthChange = (event) => {
+    const monthValue = event.target.value;
+    setMonth(monthValue);
+    if (monthValue >= 1 && monthValue <= 12) {
+      fetchRepairData(parseInt(monthValue, 10));
     }
   };
 
-  const handleEdit = (id) => {
-    console.log("Printing id", id);
-    navigate(`/car/edit/${id}`);
+  const calculateVariation = (current, previous) => {
+    if (previous === 0) return "N/A";
+    return `${(((current - previous) / previous) * 100).toFixed(2)}%`;
   };
 
   return (
-    <Paper style={{ backgroundColor: 'white' }}>
-    <TableContainer component={Paper} >
-      <br />
-      <Link
-        to="/reporte1/add"
-        style={{ textDecoration: "none", marginBottom: "1rem" }}
-      >
-        <Button
-          variant="contained"
-          color="primary"
-          style={{ marginLeft: "0.5rem", color  : "white", backgroundColor: "#D6589F"}}
-          startIcon={<PersonAddIcon />}
-        >
-          Añadir Reporte
-        </Button>
-      </Link>
-      <br /> <br />
-      <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-        <TableHead>
-          <TableRow>
-            <TableCell align="left" sx={{ fontWeight: "bold" }}>
-              Mes 
-            </TableCell>
-
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {reporte1.map((reporte1) => (
-            <TableRow
-              key={reporte1.id}
-            >
-          <TableCell align="left">{reporte1.mes}</TableCell>
-
-
-          <TableCell>
-                <Button
-                 // variant="contained"
-                  //color="info"
-                  //size="small"
-                  //onClick={() => handleEdit(car.patent)}
-                  //style={{ marginLeft: "0.5rem" }}
-                  //startIcon={<EditIcon />}
-                  
-                >
-                  
-                </Button>
-
-                <Button
-                  variant="contained"
-                  color="error"
-                  size="small"
-                  onClick={() => handleDelete(car.id)}
-                  style={{ marginLeft: "0.5rem" }}
-                  startIcon={<DeleteIcon />}
-                >
-                  Eliminar
-                </Button>
+    <div>
+      <TextField
+        label="Mes (1-12)"
+        type="number"
+        value={month}
+        onChange={handleMonthChange}
+        InputProps={{ inputProps: { min: 1, max: 12 } }}
+        style={{ marginBottom: '1rem' }}
+      />
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>MES</TableCell>
+              <TableCell align="right">Actual</TableCell>
+              <TableCell align="right">% Variación</TableCell>
+              <TableCell align="right">Anterior</TableCell>
+              <TableCell align="right">% Variación</TableCell>
+              <TableCell align="right">Siguiente</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {repairTypes.map((repairType, index) => (
+              <React.Fragment key={index}>
+                <TableRow>
+                  <TableCell>{repairType}</TableCell>
+                  <TableCell align="right">
+                    {repairData.current?.[repairType]?.numVehicles || 0}
+                  </TableCell>
+                  <TableCell align="right">
+                    {calculateVariation(
+                      repairData.current?.[repairType]?.numVehicles || 0,
+                      repairData.previous?.[repairType]?.numVehicles || 0
+                    )}
+                  </TableCell>
+                  <TableCell align="right">
+                    {repairData.previous?.[repairType]?.numVehicles || 0}
+                  </TableCell>
+                  <TableCell align="right">
+                    {calculateVariation(
+                      repairData.previous?.[repairType]?.numVehicles || 0,
+                      repairData.next?.[repairType]?.numVehicles || 0
+                    )}
+                  </TableCell>
+                  <TableCell align="right">
+                    {repairData.next?.[repairType]?.numVehicles || 0}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell></TableCell>
+                  <TableCell align="right">
+                    {repairData.current?.[repairType]?.totalCost || 0}
+                  </TableCell>
+                  <TableCell align="right">
+                    {calculateVariation(
+                      repairData.current?.[repairType]?.totalCost || 0,
+                      repairData.previous?.[repairType]?.totalCost || 0
+                    )}
+                  </TableCell>
+                  <TableCell align="right">
+                    {repairData.previous?.[repairType]?.totalCost || 0}
+                  </TableCell>
+                  <TableCell align="right">
+                    {calculateVariation(
+                      repairData.previous?.[repairType]?.totalCost || 0,
+                      repairData.next?.[repairType]?.totalCost || 0
+                    )}
+                  </TableCell>
+                  <TableCell align="right">
+                    {repairData.next?.[repairType]?.totalCost || 0}
+                  </TableCell>
+                </TableRow>
+              </React.Fragment>
+            ))}
+            <TableRow>
+              <TableCell colSpan={6} align="right">Total</TableCell>
+              <TableCell align="right">
+                {Object.values(repairData.current || {}).reduce((acc, val) => acc + (val.totalCost || 0), 0)}
               </TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-    </Paper>
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
   );
 };
 
-export default Reporte1List;
+export default TablaReparacionMes;
