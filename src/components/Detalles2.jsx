@@ -5,11 +5,11 @@ import Paper from "@mui/material/Paper";
 import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from "@mui/material";
 
 const Details = () => {
-  const { patent } = useParams();
+  const { id } = useParams();
   const [repair, setRepair] = useState(null); // Cambiado a null para indicar que no hay datos al principio
 
   const init = () => {
-    detalleService.getOneRepair(patent)
+    detalleService.getOneRepairPORID(id)
       .then((response) => {
         console.log("Mostrando datos involucrados en el costo.", response.data);
         setRepair(response.data);
@@ -24,7 +24,7 @@ const Details = () => {
 
   useEffect(() => {
     init();
-  }, [patent]);
+  }, [id]);
 
   return (
     <TableContainer component={Paper}>
@@ -35,8 +35,7 @@ const Details = () => {
           <TableRow>
             <TableCell align="right" sx={{ fontWeight: "bold" }}>Patente</TableCell>
             <TableCell align="right" sx={{ fontWeight: "bold" }}>Tipo Reparacion</TableCell>
-            <TableCell align="right" sx={{ fontWeight: "bold" }}>Dia Reparacion</TableCell>
-            <TableCell align="right" sx={{ fontWeight: "bold" }}>Mes Reparacion</TableCell>
+            <TableCell align="right" sx={{ fontWeight: "bold" }}>Fecha Reparacion</TableCell>
             <TableCell align="right" sx={{ fontWeight: "bold" }}>Hora Reparacion</TableCell>
             <TableCell align="right" sx={{ fontWeight: "bold" }}>Total Costo</TableCell>
           </TableRow>
@@ -46,11 +45,10 @@ const Details = () => {
             <TableRow key={repair.id}>
               <TableCell align="right">{repair.patent}</TableCell>
               <TableCell align="right">{repair.repairType}</TableCell>
-              <TableCell align="right">{repair.admissionDateDay}</TableCell>
-              <TableCell align="right">{repair.admissionDateMonth}</TableCell>
+              <TableCell align="left">{`${repair.admissionDateDay}/${repair.admissionDateMonth}/2024`}</TableCell>
               <TableCell align="right">{repair.admissionHour}</TableCell>
               <TableCell align="right">
-                {new Intl.NumberFormat("es-CL", { style: "decimal" }).format(repair.totalAmount)}
+                {new Intl.NumberFormat("es-CL", { style: "decimal" }).format(repair.totalAmount.toLocaleString('de-DE'))}
               </TableCell>
             </TableRow>
           )}

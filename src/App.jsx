@@ -44,7 +44,7 @@ function App() {
 
               <Route path = "/cost/list" element = {<CostList/>} />
               <Route path = "/cost/add" element = {<AddEditCost/>} />
-              <Route path = {"/cost/details-2/:patent"}  element = {<Detalles2/>} />
+              <Route path = {"/cost/details-2/:id"}  element = {<Detalles2/>} />
 
               {/*pep2*/} 
 

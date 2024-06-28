@@ -101,9 +101,7 @@ const TablaReparacionTipo = () => {
         InputProps={{ inputProps: { min: 1, max: 12 } }}
         style={{ marginBottom: '1rem' }}
       />
-      <Button variant="contained" color="primary" onClick={fetchRepairData}>
-        Filtrar
-      </Button>
+
       <TableContainer component={Paper}>
         <Table>
           <TableHead>

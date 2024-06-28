@@ -80,6 +80,16 @@ const handleDetailsCost2 = (patent) => {
   navigate(`/Cost/details-2/${patent}`);
 };
 
+const handleAddBonus = (patent) => {
+  detalleService.actualizarDESCUENTOMARCA(patent)
+    .then(response => {
+      console.log("Descuento actualizado:", response.data);
+    })
+    .catch(error => {
+      console.error("Error al actualizar el descuento:", error);
+    });
+};
+
 
 
 
@@ -156,10 +166,10 @@ const handleDetailsCost2 = (patent) => {
             {`${repair.clientDateDay}/${repair.clientDateMonth}/2024`}
           </TableCell>
           <TableCell align="right">{repair.clientHour}</TableCell>
-          <TableCell align="right">{repair.totalIva}</TableCell>
-          <TableCell align="right">{repair.totalDiscounts}</TableCell>
-          <TableCell align="right">{repair.totalRecharges}</TableCell>
-          <TableCell align="right">{repair.totalAmount}</TableCell>
+          <TableCell align="right">{repair.totalIva.toLocaleString('de-DE')}</TableCell>
+          <TableCell align="right">{repair.totalDiscounts.toLocaleString('de-DE')}</TableCell>
+          <TableCell align="right">{repair.totalRecharges.toLocaleString('de-DE')}</TableCell>
+          <TableCell align="right">{repair.totalAmount.toLocaleString('de-DE')}</TableCell>
 
               
 
@@ -179,7 +189,7 @@ const handleDetailsCost2 = (patent) => {
                   variant="contained"
                   style={{ backgroundColor: 'purple', color: 'white', marginLeft: "0.5rem" }}
                   size="small"
-                  //onClick={() => handleDelete(repair.id)}
+                  onClick={() => handleAddBonus(repair.patent)}
                   startIcon={<MonetizationOnIcon />}
                 >
                 Agregar bono 

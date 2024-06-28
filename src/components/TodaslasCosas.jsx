@@ -86,16 +86,7 @@ const RepairList = () => {
     <Paper style={{ backgroundColor: 'white' }}>
       <TableContainer component={Paper}>
         <br />
-        <Link to="/record/add" style={{ textDecoration: "none", marginBottom: "1rem" }}>
-          <Button
-            variant="contained"
-            color="primary"
-            style={{ marginLeft: "0.5rem", color: "white", backgroundColor: "#D6589F" }}
-            startIcon={<PersonAddIcon />}
-          >
-            Añadir Historial
-          </Button>
-        </Link>
+
         <br /> <br />
         <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
           <TableHead>
@@ -132,12 +123,12 @@ const RepairList = () => {
                 <TableCell align="left">{item.motorType}</TableCell>
                 <TableCell align="left">{`${item.admissionDateDay}/${item.admissionDateMonth}/2024`}</TableCell>
                 <TableCell align="left">{item.admissionHour}</TableCell>
-                <TableCell align="left">{item.totalRepairs}</TableCell>
-                <TableCell align="left">{item.totalRecharges}</TableCell>
-                <TableCell align="left">{item.totalDiscounts}</TableCell>
-                <TableCell align="left">{item.subTotal}</TableCell>
-                <TableCell align="left">{item.totalIva}</TableCell>
-                <TableCell align="left">{item.totalAmount}</TableCell>
+                <TableCell align="left">${item.totalRepairs.toLocaleString('de-DE')}</TableCell>
+                <TableCell align="left">${item.totalRecharges.toLocaleString('de-DE')}</TableCell>
+                <TableCell align="left">${item.totalDiscounts.toLocaleString('de-DE')}</TableCell>
+                <TableCell align="left">${item.subTotal.toLocaleString('de-DE')}</TableCell>
+                <TableCell align="left">${item.totalIva.toLocaleString('de-DE')}</TableCell>
+                <TableCell align="left">${item.totalAmount.toLocaleString('de-DE')}</TableCell>
                 
                 <TableCell align="left">
                     {`${item.departureDateDay}/${item.departureDateMonth}/2024`}
