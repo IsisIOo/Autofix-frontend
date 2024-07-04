@@ -48,7 +48,7 @@ const Details = () => {
               <TableCell align="left">{`${repair.admissionDateDay}/${repair.admissionDateMonth}/2024`}</TableCell>
               <TableCell align="right">{repair.admissionHour}</TableCell>
               <TableCell align="right">
-                {new Intl.NumberFormat("es-CL", { style: "decimal" }).format(repair.totalAmount.toLocaleString('de-DE'))}
+                {new Intl.NumberFormat("es-CL", { style: "decimal" }).format(repair.totalAmount)}
               </TableCell>
             </TableRow>
           )}

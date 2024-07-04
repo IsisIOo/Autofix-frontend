@@ -178,7 +178,7 @@ const handleAddBonus = (patent) => {
                   variant="contained"
                   color="info"
                   size="small"
-                  onClick={() => handleDetailsCost2(repair.patent)}
+                  onClick={() => handleDetailsCost2(repair.id)}
                   style={{ marginLeft: "0.5rem" }}
                   startIcon={<InfoIcon />}
                 >

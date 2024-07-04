@@ -27,8 +27,8 @@ const newdetalle = data => {
     return httpDetalle.post("/api/detail/newDetail/", data);
 }
 
-const actualizarDESCUENTOMARCA = data => {
-    return httpRepair.post("/api/repairs/updateRepairBONOMARCA/", data);
+const actualizarDESCUENTOMARCA = () => {
+    return httpRepair.post("/api/repairs/updateRepairBONOMARCA/");
 }
 
 const remove = id => {
@@ -36,4 +36,4 @@ const remove = id => {
 }
 
 
-export default { getAll, newrepair, remove, newdetalle, getOneDetalle, getOneRepair, getOneRepairPORID};
+export default { getAll, newrepair, remove, newdetalle, getOneDetalle, getOneRepair, getOneRepairPORID, actualizarDESCUENTOMARCA};

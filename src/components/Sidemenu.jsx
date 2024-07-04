@@ -72,20 +72,22 @@ export default function Sidemenu({ open, toggleDrawer }) {
         </ListItemButton>
 
 
-        <ListItemButton onClick={() => navigate("/list/type")}>
+        <ListItemButton onClick={() => navigate("/list/motor")}>
           <ListItemIcon>
-            <ElectricCarIcon />
+            <AssignmentTurnedInIcon/>
           </ListItemIcon>
           <ListItemText primary="Reporte 1" />
         </ListItemButton>
 
-
-      <ListItemButton onClick={() => navigate("/list/motor")}>
+        <ListItemButton onClick={() => navigate("/list/type")}>
           <ListItemIcon>
-            <AssignmentTurnedInIcon/>
+            <ElectricCarIcon />
           </ListItemIcon>
           <ListItemText primary="Reporte 2" />
         </ListItemButton>
+
+
+
 
 
       </List>
