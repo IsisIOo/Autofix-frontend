@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import recordService from "../services/record.service";
 import detalleService from "../services/detalle.service";
+import carService from "../services/car.service";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
@@ -19,6 +20,9 @@ import { indigo } from '@mui/material/colors';
 
 const RepairList = () => {
   const [repairs, setRepair] = useState([]);
+  const [carBrands, setCarBrands] = useState({});
+  const [originalData, setOriginalData] = useState({});
+  const [activeBonuses, setActiveBonuses] = useState({});
 
   const navigate = useNavigate();
 
@@ -28,26 +32,51 @@ const RepairList = () => {
       .then((response) => {
         console.log("Mostrando listado de todos los historiales ingresados.", response.data);
         setRepair(response.data);
+        fetchCarBrands(response.data);
+        storeOriginalData(response.data);
       })
       .catch((error) => {
-        console.log(
-          "Se ha producido un error al intentar mostrar listado de todos los historiales.",
-          error
-        );
+        console.log("Se ha producido un error al intentar mostrar listado de todos los historiales.", error);
       });
   };
 
+  const fetchCarBrands = (repairs) => {
+    const promises = repairs.map(repair => 
+      carService.get(repair.patent)
+        .then(response => ({ patent: repair.patent, brand: response.data.brand }))
+        .catch(error => {
+          console.error("Error al obtener la marca del auto:", error);
+          return { patent: repair.patent, brand: null };
+        })
+    );
+
+    Promise.all(promises).then(results => {
+      const brandMap = {};
+      results.forEach(result => {
+        brandMap[result.patent] = result.brand;
+      });
+      setCarBrands(brandMap);
+    });
+  };
+
+  const storeOriginalData = (repairs) => {
+    const dataMap = {};
+    repairs.forEach(repair => {
+      dataMap[repair.id] = {
+        totalAmount: repair.totalAmount,
+        totalDiscounts: repair.totalDiscounts
+      };
+    });
+    setOriginalData(dataMap);
+  };
 
   useEffect(() => {
     init();
   }, []);
 
-
   const handleDelete = (id) => {
     console.log("Printing id", id);
-    const confirmDelete = window.confirm(
-      "¿Esta seguro que desea borrar este historial?"
-    );
+    const confirmDelete = window.confirm("¿Esta seguro que desea borrar este historial?");
     if (confirmDelete) {
       detalleService
         .remove(id)
@@ -56,164 +85,143 @@ const RepairList = () => {
           init();
         })
         .catch((error) => {
-          console.log(
-            "Se ha producido un error al intentar eliminar al historial",
-            error
-          );
+          console.log("Se ha producido un error al intentar eliminar al historial", error);
         });
     }
   };
 
-
-
-
-//trato de crear un boton que redireccione a los detalles del costo
-  const handleDetailsCost = (patent) => {
+  const handleDetailsCost2 = (patent) => {
     console.log("Printing patente", patent);
-    navigate(`/Cost/details/${patent}`);
+    navigate(`/Cost/details-2/${patent}`);
   };
-  
 
-//trato de crear un boton que redireccione a los detalles del costo PARA PEP2
-const handleDetailsCost2 = (patent) => {
-  console.log("Printing patente", patent);
-  navigate(`/Cost/details-2/${patent}`);
-};
+  const handleAddBonus = async (repair) => {
+    try {
+        if (activeBonuses[repair.id]) {
+            // Restaurar los datos previos
+            repair.totalAmount = originalData[repair.id].totalAmount;
+            repair.totalDiscounts = originalData[repair.id].totalDiscounts;
+            setActiveBonuses(prevState => ({ ...prevState, [repair.id]: false }));
+        } else {
+            // Aplicar el descuento
+            const response = await detalleService.marca(repair.id); // Esperar la respuesta
+            const discount = parseFloat(response); // Convertir la respuesta a número
+            if (!isNaN(discount)) { // Verificar que discount no sea NaN
+                repair.totalDiscounts += discount;
+                repair.totalAmount -= discount;
+                setActiveBonuses(prevState => ({ ...prevState, [repair.id]: true }));
+            } else {
+                console.error("El descuento recibido no es un número válido.");
+                // Manejar el error o la situación donde discount no es numérico
+            }
+        }
+    } catch (error) {
+        console.error("Error al aplicar el descuento:", error);
+        // Manejar el error adecuadamente, por ejemplo, mostrar un mensaje al usuario
+    }
 
-const handleAddBonus = (patent) => {
-  detalleService.actualizarDESCUENTOMARCA(patent)
-    .then(response => {
-      console.log("Descuento actualizado:", response.data);
-    })
-    .catch(error => {
-      console.error("Error al actualizar el descuento:", error);
-    });
-};
 
 
 
+
+    // Actualizar el estado para reflejar los cambios en la UI
+    setRepair(prevRepairs => prevRepairs.map(r => (r.id === repair.id ? repair : r)));
+  };
+
+  const allowedBrands = ["toyota", "ford", "hyundai", "honda"];
 
   return (
     <Paper style={{ backgroundColor: 'white' }}>
-    <TableContainer component={Paper}> 
-      <br />
-      <Link
-        to="/record/add"
-        style={{ textDecoration: "none", marginBottom: "1rem" }}
-      >
-        <Button
-          variant="contained"
-          color="primary"
-          style={{ marginLeft: "0.5rem", color  : "white", backgroundColor: "#D6589F"}}
-          startIcon={<PersonAddIcon />}
-        >
-          Añadir Historial
-        </Button>
-      </Link>
-      <br /> <br />
-      <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-        <TableHead>
-          <TableRow>
-            <TableCell align="left" sx={{ fontWeight: "bold" }}>
-              Patente
-            </TableCell>
-            <TableCell align="left" sx={{ fontWeight: "bold" }}>
-              Fecha admision
-            </TableCell>            
-            <TableCell align="right" sx={{ fontWeight: "bold" }}>
-              Hora admision
-            </TableCell>
-            <TableCell align="right" sx={{ fontWeight: "bold" }}>
-              Fecha retiro
-            </TableCell>
-            <TableCell align="left" sx={{ fontWeight: "bold" }}>
-              Hora retiro
-            </TableCell>
-            <TableCell align="left" sx={{ fontWeight: "bold" }}>
-              Fecha retirado
-            </TableCell>
-            <TableCell align="left" sx={{ fontWeight: "bold" }}>
-              Hora retirado
-            </TableCell>    
-            <TableCell align="left" sx={{ fontWeight: "bold" }}>
-              Costo IVA
-            </TableCell> 
-            <TableCell align="left" sx={{ fontWeight: "bold" }}>
-              Descuentos
-            </TableCell> 
-            <TableCell align="left" sx={{ fontWeight: "bold" }}>
-              Recargos
-            </TableCell>  
-            <TableCell align="left" sx={{ fontWeight: "bold" }}>
-              Costo Total
-            </TableCell> 
-
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {repairs.map((repair) => (
-            <TableRow key={repair.id}>
-          <TableCell align="left">{repair.patent}</TableCell>
-          <TableCell align="left">
-            {` ${repair.admissionDateDayName}, ${repair.admissionDateDay}/${repair.admissionDateMonth}/2024`}
-          </TableCell>
-          <TableCell align="right">{repair.admissionHour}</TableCell>
-          <TableCell align="left">
-            {`${repair.departureDateDay}/${repair.departureDateMonth}/2024`}
-          </TableCell>
-          <TableCell align="right">{repair.departureHour}</TableCell>
-          <TableCell align="left">
-            {`${repair.clientDateDay}/${repair.clientDateMonth}/2024`}
-          </TableCell>
-          <TableCell align="right">{repair.clientHour}</TableCell>
-          <TableCell align="right">{repair.totalIva.toLocaleString('de-DE')}</TableCell>
-          <TableCell align="right">{repair.totalDiscounts.toLocaleString('de-DE')}</TableCell>
-          <TableCell align="right">{repair.totalRecharges.toLocaleString('de-DE')}</TableCell>
-          <TableCell align="right">{repair.totalAmount.toLocaleString('de-DE')}</TableCell>
-
-              
-
-              <TableCell>
-                <Button
-                  variant="contained"
-                  color="info"
-                  size="small"
-                  onClick={() => handleDetailsCost2(repair.id)}
-                  style={{ marginLeft: "0.5rem" }}
-                  startIcon={<InfoIcon />}
-                >
-                  Detalles
-                </Button>
-
-                <Button
-                  variant="contained"
-                  style={{ backgroundColor: 'purple', color: 'white', marginLeft: "0.5rem" }}
-                  size="small"
-                  onClick={() => handleAddBonus(repair.patent)}
-                  startIcon={<MonetizationOnIcon />}
-                >
-                Agregar bono 
-                </Button>
-
-
-                <Button
-                  variant="contained"
-                  color="error"
-                  size="small"
-                  onClick={() => handleDelete(repair.id)}
-                  style={{ marginLeft: "0.5rem" }}
-                  startIcon={<DeleteIcon />}
-                >
-                Eliminar 
-                </Button>
-
-
-              </TableCell>
+      <TableContainer component={Paper}>
+        <br />
+        <Link to="/record/add" style={{ textDecoration: "none", marginBottom: "1rem" }}>
+          <Button
+            variant="contained"
+            color="primary"
+            style={{ marginLeft: "0.5rem", color: "white", backgroundColor: "#D6589F" }}
+            startIcon={<PersonAddIcon />}
+          >
+            Añadir Historial
+          </Button>
+        </Link>
+        <br /> <br />
+        <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+          <TableHead>
+            <TableRow>
+              <TableCell align="left" sx={{ fontWeight: "bold" }}>Patente</TableCell>
+              <TableCell align="left" sx={{ fontWeight: "bold" }}>Fecha admision</TableCell>
+              <TableCell align="right" sx={{ fontWeight: "bold" }}>Hora admision</TableCell>
+              <TableCell align="right" sx={{ fontWeight: "bold" }}>Fecha retiro</TableCell>
+              <TableCell align="left" sx={{ fontWeight: "bold" }}>Hora retiro</TableCell>
+              <TableCell align="left" sx={{ fontWeight: "bold" }}>Fecha retirado</TableCell>
+              <TableCell align="left" sx={{ fontWeight: "bold" }}>Hora retirado</TableCell>
+              <TableCell align="left" sx={{ fontWeight: "bold" }}>Costo IVA</TableCell>
+              <TableCell align="left" sx={{ fontWeight: "bold" }}>Descuentos</TableCell>
+              <TableCell align="left" sx={{ fontWeight: "bold" }}>Recargos</TableCell>
+              <TableCell align="left" sx={{ fontWeight: "bold" }}>Costo Total</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {repairs.map((repair) => (
+              <TableRow key={repair.id}>
+                <TableCell align="left">{repair.patent}</TableCell>
+                <TableCell align="left">
+                  {` ${repair.admissionDateDayName}, ${repair.admissionDateDay}/${repair.admissionDateMonth}/2024`}
+                </TableCell>
+                <TableCell align="right">{repair.admissionHour}</TableCell>
+                <TableCell align="left">
+                  {`${repair.departureDateDay}/${repair.departureDateMonth}/2024`}
+                </TableCell>
+                <TableCell align="right">{repair.departureHour}</TableCell>
+                <TableCell align="left">
+                  {`${repair.clientDateDay}/${repair.clientDateMonth}/2024`}
+                </TableCell>
+                <TableCell align="right">{repair.clientHour}</TableCell>
+                <TableCell align="right">${repair.totalIva.toLocaleString('de-DE')}</TableCell>
+                <TableCell align="right">${repair.totalDiscounts.toLocaleString('de-DE')}</TableCell>
+                <TableCell align="right">${repair.totalRecharges.toLocaleString('de-DE')}</TableCell>
+                <TableCell align="right">${repair.totalAmount.toLocaleString('de-DE')}</TableCell>
+
+                <TableCell>
+                  <Button
+                    variant="contained"
+                    color="info"
+                    size="small"
+                    onClick={() => handleDetailsCost2(repair.id)}
+                    style={{ marginLeft: "0.5rem" }}
+                    startIcon={<InfoIcon />}
+                  >
+                    Detalles
+                  </Button>
+
+                  {carBrands[repair.patent] && allowedBrands.includes(carBrands[repair.patent].toLowerCase()) && (
+                    <Button
+                      variant="contained"
+                      style={{ backgroundColor: 'purple', color: 'white', marginLeft: "0.5rem" }}
+                      size="small"
+                      onClick={() => handleAddBonus(repair)}
+                      startIcon={<MonetizationOnIcon />}
+                    >
+                      {activeBonuses[repair.id] ? "Restaurar bono" : "Agregar bono"}
+                    </Button>
+                  )}
+
+                  <Button
+                    variant="contained"
+                    color="error"
+                    size="small"
+                    onClick={() => handleDelete(repair.id)}
+                    style={{ marginLeft: "0.5rem" }}
+                    startIcon={<DeleteIcon />}
+                  >
+                    Eliminar
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </Paper>
   );
 };

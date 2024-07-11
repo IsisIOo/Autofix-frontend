@@ -10,36 +10,41 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
+import Typography from "@mui/material/Typography"; // Importa Typography para usar como título
 
-const PreciosList = () => {
+const PreciosList2 = () => {
   const [precios, setPrecios] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchPrecios();
-  }, []);
-
-  const fetchPrecios = () => {
-    preciosService.getAll()
-      .then(response => {
-        console.log("Mostrando listado de todos los precios ingresados.", response.data);
+  const init = () => {
+    preciosService
+      .getAll()
+      .then((response) => {
+        console.log("Mostrando listado de todos los descuentos ingresados.", response.data);
         setPrecios(response.data);
       })
-      .catch(error => {
-        console.log("Se ha producido un error al intentar mostrar listado de todos los precios.", error);
+      .catch((error) => {
+        console.log(
+          "Se ha producido un error al intentar mostrar listado de todos los descuentos.",
+          error
+        );
       });
   };
 
+  useEffect(() => {
+    init();
+  }, []);
+
   const handleDelete = (id) => {
-    const confirmDelete = window.confirm("¿Está seguro que desea borrar este precio?");
+    const confirmDelete = window.confirm("¿Está seguro que desea borrar este descuento?");
     if (confirmDelete) {
       preciosService.remove(id)
-        .then(response => {
-          console.log("Precio ha sido eliminado.", response.data);
-          fetchPrecios(); // Actualizar la lista después de eliminar
+        .then((response) => {
+          console.log("Descuento ha sido eliminado.", response.data);
+          init(); // Actualizar la lista después de eliminar
         })
-        .catch(error => {
-          console.log("Se ha producido un error al intentar eliminar el precio", error);
+        .catch((error) => {
+          console.log("Se ha producido un error al intentar eliminar el descuento", error);
         });
     }
   };
@@ -48,7 +53,7 @@ const PreciosList = () => {
     <Paper style={{ backgroundColor: 'white' }}>
       <TableContainer component={Paper}>
         <Typography variant="h5" gutterBottom style={{ padding: '1rem' }}>
-          Listado de Precios de Reparaciones
+          Listado de Descuentos por Marca
         </Typography>
         <Link to="/car/add" style={{ textDecoration: "none", marginBottom: "1rem" }}>
           <Button variant="contained" color="primary" startIcon={<PersonAddIcon />}>
@@ -58,22 +63,20 @@ const PreciosList = () => {
         <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
           <TableHead>
             <TableRow>
-              <TableCell align="left" sx={{ fontWeight: "bold" }}>Nombre Reparación</TableCell>
-              <TableCell align="left" sx={{ fontWeight: "bold" }}>Gasolina</TableCell>
-              <TableCell align="right" sx={{ fontWeight: "bold" }}>Diesel</TableCell>
-              <TableCell align="right" sx={{ fontWeight: "bold" }}>Híbrido</TableCell>
-              <TableCell align="right" sx={{ fontWeight: "bold" }}>Eléctrico</TableCell>
+              <TableCell align="left" sx={{ fontWeight: "bold" }}>Toyota</TableCell>
+              <TableCell align="right" sx={{ fontWeight: "bold" }}>Ford</TableCell>
+              <TableCell align="right" sx={{ fontWeight: "bold" }}>Hyundai</TableCell>
+              <TableCell align="right" sx={{ fontWeight: "bold" }}>Honda</TableCell>
               <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {precios.map((precio) => (
               <TableRow key={precio.id}>
-                <TableCell align="left">{precio.repairName}</TableCell>
-                <TableCell align="left">{precio.gasolineAmount}</TableCell>
-                <TableCell align="right">{precio.dieselAmount}</TableCell>
-                <TableCell align="right">{precio.hybridAmount}</TableCell>
-                <TableCell align="right">{precio.electricAmount}</TableCell>
+                <TableCell align="left">{precio.toyota}</TableCell>
+                <TableCell align="right">{precio.ford}</TableCell>
+                <TableCell align="right">{precio.hyundai}</TableCell>
+                <TableCell align="right">{precio.honda}</TableCell>
                 <TableCell>
                   <Button
                     variant="contained"
@@ -95,4 +98,4 @@ const PreciosList = () => {
   );
 };
 
-export default PreciosList;
+export default PreciosList2;

@@ -9,7 +9,7 @@ const create = data => {
 }
 
 const get = patent => {
-    return httpCar.get(`/api/car/patent/${patent}`);
+    return httpCar.get(`/api/car/carpatent/${patent}`);
 }
 
 const update = data => {

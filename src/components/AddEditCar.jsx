@@ -104,7 +104,7 @@ const AddEditCar = () => {
             value={patent}
             variant="standard"
             onChange={(e) => setPatent(e.target.value)}
-            helperText="Ej. ABC123"
+            helperText="Ej. ABCD12"
           />
 
           <TextField
@@ -161,8 +161,8 @@ const AddEditCar = () => {
           >
             <MenuItem value={"Gasolina"}>Gasolina</MenuItem>
             <MenuItem value={"Diesel"}>Diesel</MenuItem>
-            <MenuItem value={"Híbrido"}>Híbrido</MenuItem>
-            <MenuItem value={"Eléctrico"}>Eléctrico</MenuItem>
+            <MenuItem value={"Hibrido"}>Hibrido</MenuItem>
+            <MenuItem value={"Electrico"}>Electrico</MenuItem>
           </TextField>
 
           <TextField

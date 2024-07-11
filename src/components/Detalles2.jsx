@@ -6,7 +6,7 @@ import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from
 
 const Details = () => {
   const { id } = useParams();
-  const [repair, setRepair] = useState(null); // Cambiado a null para indicar que no hay datos al principio
+  const [repair, setRepair] = useState(null);
 
   const init = () => {
     detalleService.getOneRepairPORID(id)
@@ -48,7 +48,7 @@ const Details = () => {
               <TableCell align="left">{`${repair.admissionDateDay}/${repair.admissionDateMonth}/2024`}</TableCell>
               <TableCell align="right">{repair.admissionHour}</TableCell>
               <TableCell align="right">
-                {new Intl.NumberFormat("es-CL", { style: "decimal" }).format(repair.totalAmount)}
+                ${new Intl.NumberFormat("es-CL", { style: "decimal" }).format(repair.totalAmount)}
               </TableCell>
             </TableRow>
           )}

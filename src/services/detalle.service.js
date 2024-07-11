@@ -27,13 +27,16 @@ const newdetalle = data => {
     return httpDetalle.post("/api/detail/newDetail/", data);
 }
 
-const actualizarDESCUENTOMARCA = () => {
-    return httpRepair.post("/api/repairs/updateRepairBONOMARCA/");
+const actualizarDESCUENTOMARCA = id => {
+    return httpRepair.put(`/api/repairs/updateRepairBONOMARCA/${id}`);
 }
 
 const remove = id => {
-    return httpRepair.delete(`/api/repairs/repair-id/${id}`);
+    return httpRepair.delete(`/api/repairs/repair-id-delete/${id}`);
 }
 
+const marca = id => {
+    return httpRepair.get(`/api/repairs/marca/${id}`);
+}
 
-export default { getAll, newrepair, remove, newdetalle, getOneDetalle, getOneRepair, getOneRepairPORID, actualizarDESCUENTOMARCA};
+export default { marca, getAll, newrepair, remove, newdetalle, getOneDetalle, getOneRepair, getOneRepairPORID, actualizarDESCUENTOMARCA};

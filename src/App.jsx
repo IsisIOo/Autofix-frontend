@@ -23,6 +23,7 @@ import PreciosList from './components/PreciosList'
 import Detalles2 from './components/Detalles2'
 import Reporte1 from './components/Reporte1'
 import Todas from './components/TodaslasCosas'
+import DescuentosList from './components/DescuentosList'
 //import AddEditreporte1 from './components/AddEditreporte1'
 
 

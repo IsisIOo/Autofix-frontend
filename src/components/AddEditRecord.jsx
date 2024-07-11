@@ -158,7 +158,7 @@ const AddEditRepair = () => {
     "Reparaciones del Sistema de Escape",
     "Reparacion de Neumaticos y Ruedas",
     "Reparaciones de la Suspension y la Direccion",
-    "Reparación del Sistema de Aire Acondicionado y Calefaccion",
+    "Reparacion del Sistema de Aire Acondicionado y Calefaccion",
     "Reparaciones del Sistema de Combustible",
     "Reparacion y Reemplazo del Parabrisas y Cristales",
   ];
@@ -176,7 +176,7 @@ const AddEditRepair = () => {
               variant="standard"
               style={{ width: "25%" }}
               onChange={(e) => setPatent(e.target.value)}
-              helperText="Ej. ABC123"
+              helperText="Ej. ABCD12"
             />
           </FormControl>
           <FormControl fullWidth>

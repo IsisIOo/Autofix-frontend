@@ -23,13 +23,14 @@ const CarList = () => {
       .getAll()
       .then((response) => {
         console.log("Mostrando listado de todos los autos ingresados.", response.data);
-        setCars(response.data);
+        setCars(response.data || []);
       })
       .catch((error) => {
         console.log(
           "Se ha producido un error al intentar mostrar listado de todos los autos.",
           error
         );
+        setCars([]);
       });
   };
 

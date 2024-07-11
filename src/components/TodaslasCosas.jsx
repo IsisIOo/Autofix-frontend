@@ -40,9 +40,16 @@ const RepairList = () => {
 
   const mergeData = () => {
     const merged = repairs.map(repair => {
-      const car = cars.find(c => c.patent === repair.patent); // Ajusta según la relación entre detalle y car
+      // Normalizar la patente eliminando espacios en blanco y caracteres especiales
+      const normalizedPatent = repair.patent.trim(); // Elimina espacios en blanco al inicio y al final
+  
+      // Buscar el auto correspondiente utilizando la patente normalizada
+      const car = cars.find(c => c.patent === normalizedPatent);
+  
+      // Resto del código de mapeo y combinación...
       const totalRepairs = repair.totalAmount - (repair.totalRecharges + repair.totalDiscounts + repair.totalIva);
       const subTotal = totalRepairs + repair.totalRecharges - repair.totalDiscounts;
+  
       return {
         ...repair,
         brand: car ? car.brand : '',
@@ -54,8 +61,10 @@ const RepairList = () => {
         subTotal: subTotal
       };
     });
+  
     setMergedData(merged);
   };
+  
 
   useEffect(() => {
     const init = async () => {

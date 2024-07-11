@@ -71,6 +71,13 @@ export default function Sidemenu({ open, toggleDrawer }) {
           <ListItemText primary="Precios del taller" />
         </ListItemButton>
 
+        <ListItemButton onClick={() => navigate("/repair-list/discount")}>
+        <ListItemIcon>
+            <PaidIcon/>
+          </ListItemIcon>
+          <ListItemText primary="Descuentos del taller" />
+        </ListItemButton>
+
 
         <ListItemButton onClick={() => navigate("/list/motor")}>
           <ListItemIcon>
