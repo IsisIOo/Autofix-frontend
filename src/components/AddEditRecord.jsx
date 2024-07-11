@@ -11,6 +11,7 @@ import Select from "@mui/material/Select";
 import Checkbox from "@mui/material/Checkbox";
 import ListItemText from "@mui/material/ListItemText";
 import InputLabel from "@mui/material/InputLabel";
+import Grid from "@mui/material/Grid";
 import detalleService from "../services/detalle.service";
 
 const AddEditRepair = () => {
@@ -19,38 +20,28 @@ const AddEditRepair = () => {
   const [admissionDateDay, setAdmissionDateDay] = useState("");
   const [admissionDateMonth, setAdmissionDateMonth] = useState("");
   const [admissionHour, setAdmissionHour] = useState("");
-  const [repairType, setRepairType] = useState([]); // Asegurarse de que sea un array
+  const [repairType, setRepairType] = useState([]);
   const [departureDateDay, setDepartureDateDay] = useState("");
   const [departureDateMonth, setDepartureDateMonth] = useState("");
   const [departureHour, setDepartureHour] = useState("");
   const [clientDateDay, setClientDateDay] = useState("");
   const [clientDateMonth, setClientDateMonth] = useState("");
   const [clientHour, setClientHour] = useState("");
-  const [category, setCategory] = useState("");
   const [totalAmount, setTotalAmount] = useState(null);
-  
-  //nuevos
-  const [totalDiscounts , setToalDiscounts] = useState(null);
+  const [totalDiscounts, setTotalDiscounts] = useState(null);
   const [totalIva, setTotalIva] = useState(null);
   const [totalRecharges, setTotalRecharges] = useState(null);
-  //
   const { id } = useParams();
   const [titleRepairForm, setTitleRepairForm] = useState("");
   const navigate = useNavigate();
 
-
-  // Función para manejar el cambio en los tipos de reparación seleccionados NO BORRAR
   const handleRepairTypeChange = (event) => {
     const {
       target: { value },
     } = event;
-    setRepairType(
-      // Asegurarse de que value es siempre un array
-      typeof value === "string" ? value.split(", ") : value
-    );
+    setRepairType(typeof value === "string" ? value.split(", ") : value);
   };
 
-  // Función para guardar el registro
   const saveRepair = (e) => {
     e.preventDefault();
     const repair = {
@@ -59,7 +50,7 @@ const AddEditRepair = () => {
       admissionDateDay,
       admissionDateMonth,
       admissionHour,
-      repairType: repairType.join(", "), // Convertir el array a una cadena para guardarlo
+      repairType: repairType.join(", "),
       departureDateDay,
       departureDateMonth,
       departureHour,
@@ -68,13 +59,9 @@ const AddEditRepair = () => {
       clientHour,
       id,
     };
-    console.log(repair);
-
-
 
     if (id) {
-      // Actualizar Datos, la verdad ahora no existe
-      repairService.update(repair)
+      detalleService.update(repair)
         .then((response) => {
           console.log("Historial ha sido actualizado.", response.data);
           navigate("/record/list");
@@ -83,11 +70,9 @@ const AddEditRepair = () => {
           console.log("Ha ocurrido un error al intentar actualizar datos del historial.", error);
         });
     } else {
-      // Crear nuevo empleado
       detalleService.newrepair(repair)
         .then((response) => {
           console.log("Historial ha sido añadido.", response.data);
-        
           navigate("/record/list");
         })
         .catch((error) => {
@@ -95,29 +80,6 @@ const AddEditRepair = () => {
         });
     }
   };
-
-
-    // Función para guardar el detalle
-    const saveDetalle = (o) => {
-      o.preventDefault();
-      const detalle = {
-        patent,
-        admissionDateDay,
-        admissionDateMonth,
-        admissionHour,
-        repairType: repairType.join(", "), // Convertir el array a una cadena para guardarlo
-        id,
-      };
-      console.log(detalle);
-  
-      detalleService.newdetalle(detalle)
-        .then((response) => {
-          console.log("Detalle ha sido añadido.", response.data);
-        })
-        .catch((error) => {
-          console.log("Ha ocurrido un error al intentar crear el detalle.", error);
-        });
-    };
 
   useEffect(() => {
     if (id) {
@@ -136,10 +98,10 @@ const AddEditRepair = () => {
           setClientDateMonth(repair.data.clientDateMonth);
           setClientHour(repair.data.clientHour);
           setTotalAmount(repair.data.totalAmount || null);
-          setToalDiscounts(repair.data.totalDiscounts || null);
+          setTotalDiscounts(repair.data.totalDiscounts || null);
           setTotalIva(repair.data.totalIva || null);
           setTotalRecharges(repair.data.totalRecharges || null);
-          setRepairType(repair.data.repairType.split(", ")); 
+          setRepairType(repair.data.repairType.split(", "));
         })
         .catch((error) => {
           console.log("Se ha producido un error.", error);
@@ -164,209 +126,205 @@ const AddEditRepair = () => {
   ];
 
   return (
-    <Paper>
-      <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+    <Paper style={{ padding: "2rem" }}>
+      <Box display="flex" flexDirection="column" alignItems="center">
         <h3>{titleRepairForm}</h3>
-        <form>
-          <FormControl fullWidth>
-            <TextField
-              id="patent"
-              label="Patente"
-              value={patent}
-              variant="standard"
-              style={{ width: "25%" }}
-              onChange={(e) => setPatent(e.target.value)}
-              helperText="Ej. ABCD12"
-            />
-          </FormControl>
-          <FormControl fullWidth>
-            <TextField
-              id="admissionDateDayName"
-              label="Dia admisión"
-              value={admissionDateDayName}
-              select
-              variant="standard"
-              onChange={(e) => setAdmissionDateDayName(e.target.value)}
-              style={{ width: "25%" }}
-            >
-              <MenuItem value={"Lunes"}>Lunes</MenuItem>
-              <MenuItem value={"Martes"}>Martes</MenuItem>
-              <MenuItem value={"Miércoles"}>Miércoles</MenuItem>
-              <MenuItem value={"Jueves"}>Jueves</MenuItem>
-              <MenuItem value={"Viernes"}>Viernes</MenuItem>
-              <MenuItem value={"Sábado"}>Sábado</MenuItem>
-              <MenuItem value={"Domingo"}>Domingo</MenuItem>
-            </TextField>
-          </FormControl>
-          <FormControl fullWidth>
-            <TextField
-              id="admissionDateDay"
-              label="Dia admisión"
-              value={admissionDateDay}
-              select
-              variant="standard"
-              onChange={(e) => setAdmissionDateDay(e.target.value)}
-              style={{ width: "25%" }}
-            >
-              {[...Array(31)].map((_, i) => (
-                <MenuItem key={i + 1} value={i + 1}>
-                  {i + 1}
-                </MenuItem>
-              ))}
-            </TextField>
-          </FormControl>
-          <FormControl fullWidth>
-            <TextField
-              id="admissionDateMonth"
-              label="Mes admisión"
-              value={admissionDateMonth}
-              select
-              variant="standard"
-              onChange={(e) => setAdmissionDateMonth(e.target.value)}
-              style={{ width: "25%" }}
-            >
-              {[...Array(12)].map((_, i) => (
-                <MenuItem key={i + 1} value={i + 1}>
-                  {i + 1}
-                </MenuItem>
-              ))}
-            </TextField>
-          </FormControl>
-          
-          <FormControl fullWidth>
-            <TextField
-              id="admissionHour"
-              label="Hora de admisión"
-              value={admissionHour}
-              style={{ width: "25%" }}
-              variant="standard"
-              onChange={(e) => setAdmissionHour(e.target.value)}
-            />
-          </FormControl>
-
-
-
-          <FormControl fullWidth>
-            <InputLabel id="repairType-label">Tipo de reparación</InputLabel>
-            <Select
-              id="repairType"
-              labelId="repairType-label"
-              multiple
-              value={repairType}
-              variant="standard"
-              onChange={handleRepairTypeChange}
-              renderValue={(selected) => selected.join(", ")}
-              style={{ width: "75%", fontSize: '0.875rem' }}
-            >
-              {repairOptions.map((option) => (
-                <MenuItem key={option} value={option}>
-                  <Checkbox checked={repairType.indexOf(option) > -1} />
-                  <ListItemText primary={option} />
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-
-          <FormControl fullWidth>
-            <TextField
-              id="departureDateDay"
-              label="Dia retiro"
-              value={departureDateDay}
-              select
-              variant="standard"
-              onChange={(e) => setDepartureDateDay(e.target.value)}
-              style={{ width: "25%" }}
-            >
-              {[...Array(31)].map((_, i) => (
-                <MenuItem key={i + 1} value={i + 1}>
-                  {i + 1}
-                </MenuItem>
-              ))}
-            </TextField>
-          </FormControl>
-          <FormControl fullWidth>
-            <TextField
-              id="departureDateMonth"
-              label="Mes retiro"
-              value={departureDateMonth}
-              select
-              variant="standard"
-              onChange={(e) => setDepartureDateMonth(e.target.value)}
-              style={{ width: "25%" }}
-            >
-              {[...Array(12)].map((_, i) => (
-                <MenuItem key={i + 1} value={i + 1}>
-                  {i + 1}
-                </MenuItem>
-              ))}
-            </TextField>
-          </FormControl>
-          <FormControl fullWidth>
-            <TextField
-              id="departureHour"
-              label="Hora retiro"
-              value={departureHour}
-              style={{ width: "25%" }}
-              variant="standard"
-              onChange={(e) => setDepartureHour(e.target.value)}
-            />
-          </FormControl>
-          <FormControl fullWidth>
-            <TextField
-              id="clientDateDay"
-              label="Dia cliente"
-              value={clientDateDay}
-              select
-              variant="standard"
-              onChange={(e) => setClientDateDay(e.target.value)}
-              style={{ width: "25%" }}
-            >
-              {[...Array(31)].map((_, i) => (
-                <MenuItem key={i + 1} value={i + 1}>
-                  {i + 1}
-                </MenuItem>
-              ))}
-            </TextField>
-          </FormControl>
-          <FormControl fullWidth>
-            <TextField
-              id="clientDateMonth"
-              label="Mes cliente"
-              value={clientDateMonth}
-              select
-              variant="standard"
-              onChange={(e) => setClientDateMonth(e.target.value)}
-              style={{ width: "25%" }}
-            >
-              {[...Array(12)].map((_, i) => (
-                <MenuItem key={i + 1} value={i + 1}>
-                  {i + 1}
-                </MenuItem>
-              ))}
-            </TextField>
-          </FormControl>
-          <FormControl fullWidth>
-            <TextField
-              id="clientHour"
-              label="Hora cliente"
-              value={clientHour}
-              style={{ width: "25%" }}
-              variant="standard"
-              onChange={(e) => setClientHour(e.target.value)}
-            />
-          </FormControl>
-
-
-          <Button
-            variant="contained"
-            color="primary"
-            size="large"
-            startIcon={<SaveIcon />}
-            onClick={saveRepair}
-          >
-            Guardar
-          </Button>
+        <form onSubmit={saveRepair}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="patent"
+                label="Patente"
+                value={patent}
+                variant="standard"
+                fullWidth
+                onChange={(e) => setPatent(e.target.value)}
+                helperText="Ej. ABCD12"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="admissionDateDayName"
+                label="Día de admisión"
+                value={admissionDateDayName}
+                select
+                variant="standard"
+                fullWidth
+                onChange={(e) => setAdmissionDateDayName(e.target.value)}
+              >
+                {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"].map((day) => (
+                  <MenuItem key={day} value={day}>
+                    {day}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                id="admissionDateDay"
+                label="Día de admisión"
+                value={admissionDateDay}
+                select
+                variant="standard"
+                fullWidth
+                onChange={(e) => setAdmissionDateDay(e.target.value)}
+              >
+                {[...Array(31)].map((_, i) => (
+                  <MenuItem key={i + 1} value={i + 1}>
+                    {i + 1}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                id="admissionDateMonth"
+                label="Mes de admisión"
+                value={admissionDateMonth}
+                select
+                variant="standard"
+                fullWidth
+                onChange={(e) => setAdmissionDateMonth(e.target.value)}
+              >
+                {[...Array(12)].map((_, i) => (
+                  <MenuItem key={i + 1} value={i + 1}>
+                    {i + 1}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                id="admissionHour"
+                label="Hora de admisión"
+                value={admissionHour}
+                variant="standard"
+                fullWidth
+                onChange={(e) => setAdmissionHour(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                id="departureDateDay"
+                label="Día de retiro"
+                value={departureDateDay}
+                select
+                variant="standard"
+                fullWidth
+                onChange={(e) => setDepartureDateDay(e.target.value)}
+              >
+                {[...Array(31)].map((_, i) => (
+                  <MenuItem key={i + 1} value={i + 1}>
+                    {i + 1}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                id="departureDateMonth"
+                label="Mes de retiro"
+                value={departureDateMonth}
+                select
+                variant="standard"
+                fullWidth
+                onChange={(e) => setDepartureDateMonth(e.target.value)}
+              >
+                {[...Array(12)].map((_, i) => (
+                  <MenuItem key={i + 1} value={i + 1}>
+                    {i + 1}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                id="departureHour"
+                label="Hora de retiro"
+                value={departureHour}
+                variant="standard"
+                fullWidth
+                onChange={(e) => setDepartureHour(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                id="clientDateDay"
+                label="Día del cliente"
+                value={clientDateDay}
+                select
+                variant="standard"
+                fullWidth
+                onChange={(e) => setClientDateDay(e.target.value)}
+              >
+                {[...Array(31)].map((_, i) => (
+                  <MenuItem key={i + 1} value={i + 1}>
+                    {i + 1}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                id="clientDateMonth"
+                label="Mes del cliente"
+                value={clientDateMonth}
+                select
+                variant="standard"
+                fullWidth
+                onChange={(e) => setClientDateMonth(e.target.value)}
+              >
+                {[...Array(12)].map((_, i) => (
+                  <MenuItem key={i + 1} value={i + 1}>
+                    {i + 1}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                id="clientHour"
+                label="Hora del cliente"
+                value={clientHour}
+                variant="standard"
+                fullWidth
+                onChange={(e) => setClientHour(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <InputLabel id="repairType-label">Tipo de reparación</InputLabel>
+                <Select
+                  id="repairType"
+                  labelId="repairType-label"
+                  multiple
+                  value={repairType}
+                  variant="standard"
+                  onChange={handleRepairTypeChange}
+                  renderValue={(selected) => selected.join(", ")}
+                >
+                  {repairOptions.map((option) => (
+                    <MenuItem key={option} value={option}>
+                      <Checkbox checked={repairType.indexOf(option) > -1} />
+                      <ListItemText primary={option} />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                startIcon={<SaveIcon />}
+                type="submit"
+                fullWidth
+              >
+                Guardar
+              </Button>
+            </Grid>
+          </Grid>
         </form>
       </Box>
     </Paper>

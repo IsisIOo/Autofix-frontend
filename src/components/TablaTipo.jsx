@@ -9,7 +9,6 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
 
 const TablaReparacionTipo = () => {
   const [repairData, setRepairData] = useState({});
@@ -19,14 +18,14 @@ const TablaReparacionTipo = () => {
     "Reparaciones del Sistema de Frenos",
     "Servicio del Sistema de Refrigeración",
     "Reparaciones del Motor",
-    "Reparaciones de la Transmisión",
-    "Reparación del Sistema Eléctrico",
+    "Reparaciones de la transmisión",
+    "Reparacion del Sistema Electrico",
     "Reparaciones del Sistema de Escape",
-    "Reparación de Neumáticos y Ruedas",
-    "Reparaciones de la Suspensión y la Dirección",
-    "Reparación del Sistema de Aire Acondicionado y Calefacción",
+    "Reparacion de Neumaticos y Ruedas",
+    "Reparaciones de la Suspension y la Direccion",
+    "Reparacion del Sistema de Aire Acondicionado y Calefaccion",
     "Reparaciones del Sistema de Combustible",
-    "Reparación y Reemplazo del Parabrisas y Cristales"
+    "Reparacion y Reemplazo del Parabrisas y Cristales"
   ];
 
   const vehicleTypes = ["Sedan", "Hatchback", "SUV", "Pickup", "Furgoneta"];
@@ -62,7 +61,7 @@ const TablaReparacionTipo = () => {
 
         // Iterar sobre cada reparación y agruparlas
         filteredRepairs.forEach((repair) => {
-          const car = cars.find((car) => car.patent === repair.patent);
+          const car = cars.find((car) => car.patent.trim() === repair.patent.trim());
           if (car) {
             const { repairType } = repair;
             const { type } = car;
@@ -76,6 +75,8 @@ const TablaReparacionTipo = () => {
                 groupedRepairs[repairType][type].totalCost += repair.totalAmount;
               }
             });
+          } else {
+            console.log(`No se encontró el vehículo para la patente ${repair.patent}`);
           }
         });
 

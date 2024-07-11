@@ -17,75 +17,87 @@ const TablaReparacionMes = () => {
     "Reparaciones del Sistema de Frenos",
     "Servicio del Sistema de Refrigeración",
     "Reparaciones del Motor",
-    "Reparaciones de la Transmisión",
-    "Reparación del Sistema Eléctrico",
+    "Reparaciones de la transmisión",
+    "Reparacion del Sistema Electrico",
     "Reparaciones del Sistema de Escape",
-    "Reparación de Neumáticos y Ruedas",
-    "Reparaciones de la Suspensión y la Dirección",
-    "Reparación del Sistema de Aire Acondicionado y Calefacción",
+    "Reparacion de Neumaticos y Ruedas",
+    "Reparaciones de la Suspension y la Direccion",
+    "Reparacion del Sistema de Aire Acondicionado y Calefaccion",
     "Reparaciones del Sistema de Combustible",
-    "Reparación y Reemplazo del Parabrisas y Cristales",
+    "Reparacion y Reemplazo del Parabrisas y Cristales",
   ];
 
-  const fetchRepairData = (monthInt) => {
-    detalleService.getAll().then((repairResponse) => {
+  const fetchRepairData = async (selectedMonth) => {
+    try {
+      const repairResponse = await detalleService.getAll();
       const repairs = repairResponse.data;
-
-      const previousMonth = monthInt === 1 ? 12 : monthInt - 1;
-      const nextMonth = monthInt === 12 ? 1 : monthInt + 1;
-
-      const filteredRepairs = {
-        current: repairs.filter((repair) => repair.admissionDateMonth === monthInt),
-        previous: repairs.filter((repair) => repair.admissionDateMonth === previousMonth),
-        next: repairs.filter((repair) => repair.admissionDateMonth === nextMonth),
-      };
-
+  
+      // Inicializar datos agrupados por tipo de reparación y período
       const groupedRepairs = {
         current: {},
         previous: {},
         next: {},
       };
-
-      ["current", "previous", "next"].forEach((timePeriod) => {
-        repairTypes.forEach((repairType) => {
-          groupedRepairs[timePeriod][repairType] = {
-            numVehicles: 0,
-            totalCost: 0,
-          };
-        });
+  
+      repairTypes.forEach((repairType) => {
+        groupedRepairs.current[repairType] = { numVehicles: 0, totalCost: 0 };
+        groupedRepairs.previous[repairType] = { numVehicles: 0, totalCost: 0 };
+        groupedRepairs.next[repairType] = { numVehicles: 0, totalCost: 0 };
       });
-
-      ["current", "previous", "next"].forEach((timePeriod) => {
-        filteredRepairs[timePeriod].forEach((repair) => {
-          const { repairType, totalAmount } = repair;
-
-          repairTypes.forEach((type) => {
-            if (repairType.includes(type)) {
-              groupedRepairs[timePeriod][type].numVehicles++;
-              groupedRepairs[timePeriod][type].totalCost += totalAmount;
+  
+      // Iterar sobre todas las reparaciones para calcular estadísticas y variaciones
+      repairs.forEach((repair) => {
+        const { admissionDateMonth, repairType, totalAmount } = repair;
+  
+        // Verificar si la reparación está dentro del rango de meses seleccionado
+        if (
+          admissionDateMonth === selectedMonth ||
+          admissionDateMonth === selectedMonth - 1 ||
+          admissionDateMonth === selectedMonth + 1
+        ) {
+          // Determinar el período (current, previous, next)
+          const timePeriod =
+            admissionDateMonth === selectedMonth
+              ? "current"
+              : admissionDateMonth === selectedMonth - 1
+              ? "previous"
+              : "next";
+  
+          // Separar las reparaciones por coma y limpiar espacios en blanco
+          const repairTypeArray = repairType.split(",").map((r) => r.trim());
+  
+          // Actualizar estadísticas para cada tipo de reparación en la lista
+          repairTypeArray.forEach((singleRepairType) => {
+            if (repairTypes.includes(singleRepairType)) {
+              groupedRepairs[timePeriod][singleRepairType].numVehicles++;
+              groupedRepairs[timePeriod][singleRepairType].totalCost += totalAmount;
             }
           });
-        });
+        }
       });
-
-      console.log("Datos de reparaciones agrupadas:", groupedRepairs);
+  
+      // Actualizar el estado con los datos agrupados y calculados
       setRepairData(groupedRepairs);
-    });
-  };
-
-  const handleMonthChange = (event) => {
-    const monthValue = event.target.value;
-    setMonth(monthValue);
-    if (monthValue >= 1 && monthValue <= 12) {
-      fetchRepairData(parseInt(monthValue, 10));
+    } catch (error) {
+      console.error("Error fetching repair data:", error);
     }
   };
-
+  
+  // Función para manejar el cambio de mes en el input
+  const handleMonthChange = (event) => {
+    const selectedMonth = parseInt(event.target.value, 10);
+    setMonth(selectedMonth.toString());
+    if (!isNaN(selectedMonth) && selectedMonth >= 1 && selectedMonth <= 12) {
+      fetchRepairData(selectedMonth);
+    }
+  };
+  
+  // Función para calcular la variación (%)
   const calculateVariation = (current, previous) => {
     if (previous === 0) return "N/A";
     return `${(((current - previous) / previous) * 100).toFixed(2)}%`;
   };
-
+  
   return (
     <div>
       <TextField

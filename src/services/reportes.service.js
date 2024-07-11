@@ -2,7 +2,7 @@ import httpReportes from "../http-common";
 
 
 //obtiene todos los repairs, hay que cambiarlo por detalleservice.getall
-const getAll = () => {
+const getAllReportes = () => {
     return httpReportes.get('/api/reportes/');
 }
 
@@ -11,4 +11,4 @@ const getAllCar = () => {
     return httpReportes.get('/api/reportes/car/');
 }
 
-export default { getAll, getAllCar };
+export default { getAllReportes, getAllCar };

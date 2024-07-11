@@ -10,6 +10,8 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
+import Typography from "@mui/material/Typography";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 
 const PreciosList = () => {
   const [precios, setPrecios] = useState([]);
@@ -50,11 +52,7 @@ const PreciosList = () => {
         <Typography variant="h5" gutterBottom style={{ padding: '1rem' }}>
           Listado de Precios de Reparaciones
         </Typography>
-        <Link to="/car/add" style={{ textDecoration: "none", marginBottom: "1rem" }}>
-          <Button variant="contained" color="primary" startIcon={<PersonAddIcon />}>
-            Agregar Precio
-          </Button>
-        </Link>
+
         <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
           <TableHead>
             <TableRow>
