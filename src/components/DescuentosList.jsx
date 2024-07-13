@@ -11,17 +11,20 @@ import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Typography from "@mui/material/Typography"; // Importa Typography para usar como título
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import descuentoService from "../services/descuento.service";
 
-const PreciosList2 = () => {
-  const [precios, setPrecios] = useState([]);
+
+const DescuentosList = () => {
+  const [descuentos, setDescuentos] = useState([]);
   const navigate = useNavigate();
 
   const init = () => {
-    preciosService
+    descuentoService
       .getAll()
       .then((response) => {
         console.log("Mostrando listado de todos los descuentos ingresados.", response.data);
-        setPrecios(response.data);
+        setDescuentos(response.data);
       })
       .catch((error) => {
         console.log(
@@ -38,7 +41,7 @@ const PreciosList2 = () => {
   const handleDelete = (id) => {
     const confirmDelete = window.confirm("¿Está seguro que desea borrar este descuento?");
     if (confirmDelete) {
-      preciosService.remove(id)
+      descuentoService.remove(id)
         .then((response) => {
           console.log("Descuento ha sido eliminado.", response.data);
           init(); // Actualizar la lista después de eliminar
@@ -55,28 +58,36 @@ const PreciosList2 = () => {
         <Typography variant="h5" gutterBottom style={{ padding: '1rem' }}>
           Listado de Descuentos por Marca
         </Typography>
-        <Link to="/car/add" style={{ textDecoration: "none", marginBottom: "1rem" }}>
+        <Link to="/descuento/add" style={{ textDecoration: "none", marginBottom: "1rem" }}>
           <Button variant="contained" color="primary" startIcon={<PersonAddIcon />}>
-            Agregar Precio
+            Agregar Descuento
           </Button>
         </Link>
         <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
           <TableHead>
             <TableRow>
-              <TableCell align="left" sx={{ fontWeight: "bold" }}>Toyota</TableCell>
-              <TableCell align="right" sx={{ fontWeight: "bold" }}>Ford</TableCell>
-              <TableCell align="right" sx={{ fontWeight: "bold" }}>Hyundai</TableCell>
-              <TableCell align="right" sx={{ fontWeight: "bold" }}>Honda</TableCell>
+              <TableCell align="left" sx={{ fontWeight: "bold" }}>Bonos Toyota</TableCell>
+              <TableCell align="left" sx={{ fontWeight: "bold" }}>Numero Bonos Toyota</TableCell>
+              <TableCell align="right" sx={{ fontWeight: "bold" }}>Bonos Ford</TableCell>
+              <TableCell align="left" sx={{ fontWeight: "bold" }}>Numero Bonos Ford</TableCell>
+              <TableCell align="right" sx={{ fontWeight: "bold" }}>Bonos Hyundai</TableCell>
+              <TableCell align="left" sx={{ fontWeight: "bold" }}>Numero Bonos Hyundai</TableCell>
+              <TableCell align="right" sx={{ fontWeight: "bold" }}>Bonos Honda</TableCell>
+              <TableCell align="left" sx={{ fontWeight: "bold" }}>Numero Bonos Honda</TableCell>
               <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {precios.map((precio) => (
+            {descuentos.map((precio) => (
               <TableRow key={precio.id}>
-                <TableCell align="left">{precio.toyota}</TableCell>
-                <TableCell align="right">{precio.ford}</TableCell>
-                <TableCell align="right">{precio.hyundai}</TableCell>
-                <TableCell align="right">{precio.honda}</TableCell>
+                <TableCell align="left">{precio.toyotaAmount}</TableCell>
+                <TableCell align="left">{precio.toyotanumber}</TableCell>
+                <TableCell align="right">{precio.fordAmount}</TableCell>
+                <TableCell align="left">{precio.fordnumber}</TableCell>
+                <TableCell align="right">{precio.hyundaiAmount}</TableCell>
+                <TableCell align="left">{precio.hyundainumber}</TableCell>
+                <TableCell align="right">{precio.hondaAmount}</TableCell>
+                <TableCell align="left">{precio.hondanumber}</TableCell>
                 <TableCell>
                   <Button
                     variant="contained"
@@ -98,4 +109,4 @@ const PreciosList2 = () => {
   );
 };
 
-export default PreciosList2;
+export default DescuentosList;

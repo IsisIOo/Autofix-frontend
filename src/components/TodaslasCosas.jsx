@@ -47,7 +47,7 @@ const RepairList = () => {
       const car = cars.find(c => c.patent === normalizedPatent);
   
       // Resto del código de mapeo y combinación...
-      const totalRepairs = repair.totalAmount - (repair.totalRecharges + repair.totalDiscounts + repair.totalIva);
+      const totalRepairs = repair.totalAmount - (repair.totalRecharges + repair.totalIva) + repair.totalDiscounts;
       const subTotal = totalRepairs + repair.totalRecharges - repair.totalDiscounts;
   
       return {

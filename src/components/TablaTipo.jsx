@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import detalleService from "../services/detalle.service";
+import reportesService from "../services/reportes.service";
 import carService from "../services/car.service";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -35,7 +36,7 @@ const TablaReparacionTipo = () => {
   }, [month]);
 
   const fetchRepairData = () => {
-    Promise.all([detalleService.getAll(), carService.getAll()])
+    Promise.all([reportesService.getAllReportes(), reportesService.getAllCar()])
       .then(([repairResponse, carResponse]) => {
         const repairs = repairResponse.data;
         const cars = carResponse.data;

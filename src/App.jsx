@@ -24,6 +24,7 @@ import Detalles2 from './components/Detalles2'
 import Reporte1 from './components/Reporte1'
 import Todas from './components/TodaslasCosas'
 import DescuentosList from './components/DescuentosList'
+import AddDescuento from './components/AddDescuento'
 //import AddEditreporte1 from './components/AddEditreporte1'
 
 
@@ -62,6 +63,8 @@ function App() {
               <Route path = "/list/reparacion" element = {<TablaRep/>} />
 
               <Route path = "/repair-list/price" element = {<PreciosList/>} />
+              <Route path = "/repair-list/discount" element = {<DescuentosList/>} />
+              <Route path = "/descuento/add" element = {<AddDescuento/>} />
               
               
               <Route path = "/todo/car-repair" element = {<Todas/>} />

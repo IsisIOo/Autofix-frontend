@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import detalleService from "../services/detalle.service";
+import reportesService from "../services/reportes.service";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -29,7 +30,7 @@ const TablaReparacionMes = () => {
 
   const fetchRepairData = async (selectedMonth) => {
     try {
-      const repairResponse = await detalleService.getAll();
+      const repairResponse = await reportesService.getAllReportes();
       const repairs = repairResponse.data;
   
       // Inicializar datos agrupados por tipo de reparación y período

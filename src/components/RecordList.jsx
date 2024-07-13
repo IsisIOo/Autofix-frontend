@@ -12,36 +12,35 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import InfoIcon from '@mui/icons-material/Info';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
-import { indigo } from '@mui/material/colors';
 
 const RepairList = () => {
-  const [repairs, setRepair] = useState([]);
+  const [repairs, setRepairs] = useState([]);
   const [carBrands, setCarBrands] = useState({});
-  const [originalData, setOriginalData] = useState({});
-  const [activeBonuses, setActiveBonuses] = useState({});
-
+  const [activeBonuses, setActiveBonuses] = useState([]);
   const navigate = useNavigate();
 
-  const init = () => {
-    detalleService
-      .getAll()
-      .then((response) => {
-        console.log("Mostrando listado de todos los historiales ingresados.", response.data);
-        setRepair(response.data);
-        fetchCarBrands(response.data);
-        storeOriginalData(response.data);
-      })
-      .catch((error) => {
-        console.log("Se ha producido un error al intentar mostrar listado de todos los historiales.", error);
-      });
+  // Función para inicializar los datos
+  const init = async () => {
+    try {
+      const response = await detalleService.getAll();
+      console.log("Mostrando listado de todos los historiales ingresados.", response.data);
+      setRepairs(response.data);
+      fetchCarBrands(response.data);
+      fetchActiveBonuses(response.data);
+    } catch (error) {
+      console.error("Se ha producido un error al intentar mostrar listado de todos los historiales.", error);
+    }
   };
 
+  useEffect(() => {
+    init();
+  }, []);
+
   const fetchCarBrands = (repairs) => {
-    const promises = repairs.map(repair => 
+    const promises = repairs.map(repair =>
       carService.get(repair.patent)
         .then(response => ({ patent: repair.patent, brand: response.data.brand }))
         .catch(error => {
@@ -59,73 +58,66 @@ const RepairList = () => {
     });
   };
 
-  const storeOriginalData = (repairs) => {
-    const dataMap = {};
-    repairs.forEach(repair => {
-      dataMap[repair.id] = {
-        totalAmount: repair.totalAmount,
-        totalDiscounts: repair.totalDiscounts
-      };
-    });
-    setOriginalData(dataMap);
+  const fetchActiveBonuses = (repairs) => {
+    const activeBonuses = repairs.reduce((acc, repair) => {
+      if (repair.hasBonusApplied) {
+        acc.push(repair.patent);
+      }
+      return acc;
+    }, []);
+    setActiveBonuses(activeBonuses);
   };
-
-  useEffect(() => {
-    init();
-  }, []);
 
   const handleDelete = (id) => {
     console.log("Printing id", id);
-    const confirmDelete = window.confirm("¿Esta seguro que desea borrar este historial?");
+    const confirmDelete = window.confirm("¿Está seguro que desea borrar este historial?");
     if (confirmDelete) {
       detalleService
         .remove(id)
         .then((response) => {
-          console.log("historial ha sido eliminado.", response.data);
+          console.log("Historial ha sido eliminado.", response.data);
+          // Llamamos de nuevo a init() después de eliminar
           init();
         })
         .catch((error) => {
-          console.log("Se ha producido un error al intentar eliminar al historial", error);
+          console.error("Se ha producido un error al intentar eliminar al historial", error);
         });
     }
   };
 
   const handleDetailsCost2 = (patent) => {
-    console.log("Printing patente", patent);
+    console.log("Printing patent", patent);
     navigate(`/Cost/details-2/${patent}`);
   };
 
   const handleAddBonus = async (repair) => {
     try {
-        if (activeBonuses[repair.id]) {
-            // Restaurar los datos previos
-            repair.totalAmount = originalData[repair.id].totalAmount;
-            repair.totalDiscounts = originalData[repair.id].totalDiscounts;
-            setActiveBonuses(prevState => ({ ...prevState, [repair.id]: false }));
-        } else {
-            // Aplicar el descuento
-            const response = await detalleService.marca(repair.id); // Esperar la respuesta
-            const discount = parseFloat(response); // Convertir la respuesta a número
-            if (!isNaN(discount)) { // Verificar que discount no sea NaN
-                repair.totalDiscounts += discount;
-                repair.totalAmount -= discount;
-                setActiveBonuses(prevState => ({ ...prevState, [repair.id]: true }));
-            } else {
-                console.error("El descuento recibido no es un número válido.");
-                // Manejar el error o la situación donde discount no es numérico
-            }
-        }
+      // Verificar si el vehículo ya tiene aplicado el bono
+      if (activeBonuses.includes(repair.patent)) {
+        console.log(`El vehículo con patente ${repair.patent} ya tiene aplicado el bono.`);
+        return;
+      }
+
+      const updatedRepair = await detalleService.actualizarDESCUENTOMARCA(repair.id);
+
+      if (updatedRepair) {
+        // Actualizar el estado local para reflejar los cambios
+        setRepairs(prevRepairs =>
+          prevRepairs.map(r =>
+            r.id === repair.id ? { ...r, totalAmount: updatedRepair.totalAmount, totalDiscounts: updatedRepair.totalDiscounts } : r
+          )
+        );
+
+        // Marcar el vehículo como que ya tiene aplicado el bono
+        setActiveBonuses(prevBonuses => [...prevBonuses, repair.patent]);
+      } else {
+        console.error("Error al actualizar el registro de reparación.");
+        // Manejar el error adecuadamente
+      }
     } catch (error) {
-        console.error("Error al aplicar el descuento:", error);
-        // Manejar el error adecuadamente, por ejemplo, mostrar un mensaje al usuario
+      console.error("Error al aplicar el descuento:", error);
+      // Manejar el error adecuadamente
     }
-
-
-
-
-
-    // Actualizar el estado para reflejar los cambios en la UI
-    setRepair(prevRepairs => prevRepairs.map(r => (r.id === repair.id ? repair : r)));
   };
 
   const allowedBrands = ["toyota", "ford", "hyundai", "honda"];
@@ -149,8 +141,8 @@ const RepairList = () => {
           <TableHead>
             <TableRow>
               <TableCell align="left" sx={{ fontWeight: "bold" }}>Patente</TableCell>
-              <TableCell align="left" sx={{ fontWeight: "bold" }}>Fecha admision</TableCell>
-              <TableCell align="right" sx={{ fontWeight: "bold" }}>Hora admision</TableCell>
+              <TableCell align="left" sx={{ fontWeight: "bold" }}>Fecha admisión</TableCell>
+              <TableCell align="right" sx={{ fontWeight: "bold" }}>Hora admisión</TableCell>
               <TableCell align="right" sx={{ fontWeight: "bold" }}>Fecha retiro</TableCell>
               <TableCell align="left" sx={{ fontWeight: "bold" }}>Hora retiro</TableCell>
               <TableCell align="left" sx={{ fontWeight: "bold" }}>Fecha retirado</TableCell>
@@ -166,7 +158,7 @@ const RepairList = () => {
               <TableRow key={repair.id}>
                 <TableCell align="left">{repair.patent}</TableCell>
                 <TableCell align="left">
-                  {` ${repair.admissionDateDayName}, ${repair.admissionDateDay}/${repair.admissionDateMonth}/2024`}
+                  {`${repair.admissionDateDayName}, ${repair.admissionDateDay}/${repair.admissionDateMonth}/2024`}
                 </TableCell>
                 <TableCell align="right">{repair.admissionHour}</TableCell>
                 <TableCell align="left">
@@ -177,24 +169,24 @@ const RepairList = () => {
                   {`${repair.clientDateDay}/${repair.clientDateMonth}/2024`}
                 </TableCell>
                 <TableCell align="right">{repair.clientHour}</TableCell>
-                <TableCell align="right">${repair.totalIva.toLocaleString('de-DE')}</TableCell>
-                <TableCell align="right">${repair.totalDiscounts.toLocaleString('de-DE')}</TableCell>
-                <TableCell align="right">${repair.totalRecharges.toLocaleString('de-DE')}</TableCell>
-                <TableCell align="right">${repair.totalAmount.toLocaleString('de-DE')}</TableCell>
+                <TableCell align="right">{repair.totalIva ? `$${repair.totalIva.toLocaleString('de-DE')}` : '-'}</TableCell>
+                <TableCell align="right">{repair.totalDiscounts ? `$${repair.totalDiscounts.toLocaleString('de-DE')}` : '$-'}</TableCell>
+                <TableCell align="right">{repair.totalRecharges ? `$${repair.totalRecharges.toLocaleString('de-DE')}` : '$-'}</TableCell>
+                <TableCell align="right">{repair.totalAmount ? `$${repair.totalAmount.toLocaleString('de-DE')}` : '$-'}</TableCell>
 
                 <TableCell>
                   <Button
                     variant="contained"
                     color="info"
                     size="small"
-                    onClick={() => handleDetailsCost2(repair.id)}
+                    onClick={() => handleDetailsCost2(repair.patent)}
                     style={{ marginLeft: "0.5rem" }}
                     startIcon={<InfoIcon />}
                   >
                     Detalles
                   </Button>
 
-                  {carBrands[repair.patent] && allowedBrands.includes(carBrands[repair.patent].toLowerCase()) && (
+                  {carBrands[repair.patent] && allowedBrands.includes(carBrands[repair.patent].toLowerCase()) && !activeBonuses.includes(repair.patent) && (
                     <Button
                       variant="contained"
                       style={{ backgroundColor: 'purple', color: 'white', marginLeft: "0.5rem" }}
@@ -202,9 +194,10 @@ const RepairList = () => {
                       onClick={() => handleAddBonus(repair)}
                       startIcon={<MonetizationOnIcon />}
                     >
-                      {activeBonuses[repair.id] ? "Restaurar bono" : "Agregar bono"}
+                      Agregar bono
                     </Button>
                   )}
+
 
                   <Button
                     variant="contained"
