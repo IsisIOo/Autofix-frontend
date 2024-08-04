@@ -25,7 +25,7 @@ const RepairList = () => {
       const response = await detalleService.getAll();
       setRepairs(response.data);
     } catch (error) {
-      console.log("Error fetching details:", error);
+
     }
   };
 

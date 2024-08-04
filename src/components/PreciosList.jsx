@@ -70,7 +70,7 @@ const PreciosList = () => {
                 <TableCell align="left">{precio.repairName}</TableCell>
                 <TableCell align="left">{precio.gasolineAmount}</TableCell>
                 <TableCell align="right">{precio.dieselAmount}</TableCell>
-                <TableCell align="right">{precio.hybridAmount}</TableCell>
+                <TableCell align="right">{precio.hibridAmount}</TableCell>
                 <TableCell align="right">{precio.electricAmount}</TableCell>
                 <TableCell>
                   <Button

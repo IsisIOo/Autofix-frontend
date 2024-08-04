@@ -115,7 +115,7 @@ const AddEditRepair = () => {
     "Reparaciones del Sistema de Frenos",
     "Servicio del Sistema de Refrigeración",
     "Reparaciones del Motor",
-    "Reparaciones de la transmisión",
+    "Reparaciones de la Transmisión",
     "Reparacion del Sistema Electrico",
     "Reparaciones del Sistema de Escape",
     "Reparacion de Neumaticos y Ruedas",

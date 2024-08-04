@@ -85,9 +85,9 @@ const RepairList = () => {
     }
   };
 
-  const handleDetailsCost2 = (patent) => {
-    console.log("Printing patent", patent);
-    navigate(`/Cost/details-2/${patent}`);
+  const handleDetailsCost2 = (id) => {
+    console.log("Printing patent", id);
+    navigate(`/Cost/details-2/${id}`);
   };
 
   const handleAddBonus = async (repair) => {
@@ -147,10 +147,11 @@ const RepairList = () => {
               <TableCell align="left" sx={{ fontWeight: "bold" }}>Hora retiro</TableCell>
               <TableCell align="left" sx={{ fontWeight: "bold" }}>Fecha retirado</TableCell>
               <TableCell align="left" sx={{ fontWeight: "bold" }}>Hora retirado</TableCell>
-              <TableCell align="left" sx={{ fontWeight: "bold" }}>Costo IVA</TableCell>
-              <TableCell align="left" sx={{ fontWeight: "bold" }}>Descuentos</TableCell>
-              <TableCell align="left" sx={{ fontWeight: "bold" }}>Recargos</TableCell>
-              <TableCell align="left" sx={{ fontWeight: "bold" }}>Costo Total</TableCell>
+              <TableCell align="right" sx={{ fontWeight: "bold" }}>Costo IVA</TableCell>
+              <TableCell align="right" sx={{ fontWeight: "bold" }}>Descuentos</TableCell>
+              <TableCell align="right" sx={{ fontWeight: "bold" }}>Recargos</TableCell>
+              <TableCell align="right" sx={{ fontWeight: "bold" }}>Costo Total</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold" }}>Acciones</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -174,12 +175,12 @@ const RepairList = () => {
                 <TableCell align="right">{repair.totalRecharges ? `$${repair.totalRecharges.toLocaleString('de-DE')}` : '$-'}</TableCell>
                 <TableCell align="right">{repair.totalAmount ? `$${repair.totalAmount.toLocaleString('de-DE')}` : '$-'}</TableCell>
 
-                <TableCell>
+                <TableCell align="center">
                   <Button
                     variant="contained"
                     color="info"
                     size="small"
-                    onClick={() => handleDetailsCost2(repair.patent)}
+                    onClick={() => handleDetailsCost2(repair.id)}
                     style={{ marginLeft: "0.5rem" }}
                     startIcon={<InfoIcon />}
                   >
@@ -197,7 +198,6 @@ const RepairList = () => {
                       Agregar bono
                     </Button>
                   )}
-
 
                   <Button
                     variant="contained"
